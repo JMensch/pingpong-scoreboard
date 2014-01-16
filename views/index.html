@@ -1,0 +1,40 @@
+<!-- index.html -->
+	<!DOCTYPE html>
+	<html lang="en" ng-app="myApp">
+	<head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Tembo PingPong</title>
+        <meta name="description" content="">
+         <!-- Mobile Specific Metas -->
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+        <!--[if lte IE 8]>
+        <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+        <link rel="stylesheet" href="stylesheets/normalize.css">
+        <link rel="stylesheet" href="stylesheets/foundation.min.css">
+        <link rel="stylesheet" href="stylesheets/style.css">	  
+	</head>
+
+	<body>
+		<header>
+			<nav>
+				<ul>
+					<li><a href="/">Singles</a></li>
+					<li><a href="doubles">Doubles</a></li>
+				</ul>
+			</nav>
+		</header>
+		<div ng-view class="row">
+		</div>
+
+	  	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+		<script src="javascripts/vendor/modernizr.js"></script>
+	  	<script src="javascripts/vendor/foundation.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.2/angular.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.2/angular-route.js"></script>
+	  	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.2/angular-resource.js"></script>
+	  	<!--<script src="js/vendor/underscore-min.js"></script>-->
+	  	<script src="javascripts/angular.js"></script>
+	</body>
+</html>

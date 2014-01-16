@@ -1,0 +1,12 @@
+nav ul {
+	list-style: none;
+	text-align: center;
+}
+
+nav ul li {
+	display: inline;
+}
+
+nav a { color: #000; }
+nav a:hover { color: #ababab; }
+nav a.active { color: blue; }
