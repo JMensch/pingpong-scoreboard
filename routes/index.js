@@ -1,7 +1,7 @@
-
-/*
- * GET home page.
- */
+/**
+* Routes for serving HTML pages
+*
+**/
 
 exports.index = function(req, res){
   res.render('index.html');
@@ -9,5 +9,6 @@ exports.index = function(req, res){
 
 exports.partials = function(req, res) {
 	var type = req.params.type;
-	res.render('partials/' + type+'.html');
+	console.log(type);
+	res.render('partials/' + type + ".html");
 };
