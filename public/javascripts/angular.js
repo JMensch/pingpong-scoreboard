@@ -45,14 +45,38 @@ myApp.controller('singlesCtrl', function($scope, $http, $location, chartFactory)
     	if (!$.isEmptyObject(data)) {
 	      	var user_data = data.data.user_data;
 	      	var games = data.data.games;
-	      	console.log(games);
-	      	var index;
+	      	var index,
+	      		chart_data = [];
     			$scope.chart = [],
     			$scope.chart_error,
 	      		user_id = localStorage['user_id'];
 
 	      	$scope.total_players = user_data.length;
-	      	chartFactory.insertPie();
+	      	/**
+	      	* Build pie chart data
+	      	**/
+	      	var opponents = _.uniq(_.pluck(games, 'opponent'));
+	      	_.each(opponents, function (opponent) { chart_data.push({ name: opponent, wins: 0, losses: 0 })});
+	      	_.each(games, function (game) {
+	      		var index = _.find(chart_data, function (player) { return player.name == game.opponent });
+	      		//if game was a win
+	      		if (game.outcome) {
+	      			index.wins = index.wins + 1;
+	      		} else {
+	      			index.losses = index.losses + 1;
+	      		}
+	      	});
+	      	//calculate win percentage
+	      	_.each(chart_data, function (opponent) { opponent.y = (opponent.wins / (opponent.wins + opponent.losses))*100 });
+	      	var max = _.max(chart_data, function (opponent) { return opponent.y });
+	      		max.sliced = true,
+	      		max.selected = true;
+	      		
+	      	chartFactory.insertPie(chart_data);
+	      	
+	      	/**
+	      	* Build table
+	      	**/
 	  		for(var i=0, j=user_data.length; i < j; i++) {
 	  			if (JSON.stringify(user_data[i]._id) == user_id) {
 	  				index = i;
@@ -168,7 +192,7 @@ myApp.service('authService', function() {
 
 myApp.factory('chartFactory', function() {
 	return {
-		insertPie: function() {
+		insertPie: function(chart_data) {
 			// Radialize the colors
 			Highcharts.getOptions().colors = Highcharts.map(Highcharts.getOptions().colors, function(color) {
 			    return {
@@ -187,12 +211,12 @@ myApp.factory('chartFactory', function() {
 	                plotShadow: false
 	            },
 	            title: {
-	                text: 'Opponents',
+	                text: 'Win Percentage',
 	            },
 	            tooltip: {
 	        	    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>',
 	        	    positioner: function() {
-	        	    	return { x: 35, y: 190 };
+	        	    	return { x: 60, y: 190 };
 	        	    }
 	            },
 	            credits: {
@@ -214,20 +238,8 @@ myApp.factory('chartFactory', function() {
 	            },
 	            series: [{
 	                type: 'pie',
-	                name: 'Browser share',
-	                data: [
-	                    ['Firefox',   45.0],
-	                    ['IE',       26.8],
-	                    {
-	                        name: 'Chrome',
-	                        y: 12.8,
-	                        sliced: true,
-	                        selected: true
-	                    },
-	                    ['Safari',    8.5],
-	                    ['Opera',     6.2],
-	                    ['Others',   0.7]
-	                ]
+	                name: 'Win %',
+	                data: chart_data
 	            }]
 	        });
 		}
