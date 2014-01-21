@@ -1,12 +1,152 @@
-nav ul {
-	list-style: none;
-	text-align: center;
-}
+.hidden {
+  display: none !important; }
 
-nav ul li {
-	display: inline;
-}
+/*============================
+=            NAVIGATION      =
+============================*/
+nav.main-nav {
+  width: 100%;
+  height: 50px;
+  background: -webkit-linear-gradient(top, #f26b3c, #f05924);
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2); }
+  nav.main-nav img {
+    float: left; }
+  nav.main-nav ul {
+    float: right;
+    list-style: none;
+    text-align: center;
+    margin: 0; }
+    nav.main-nav ul li {
+      margin: 0;
+      float: right;
+      position: relative; }
+      nav.main-nav ul li a {
+        position: relative;
+        padding: 0 15px;
+        display: inline-block;
+        height: 50px;
+        line-height: 50px;
+        color: #fff;
+        opacity: 0.8;
+        text-decoration: none; }
+        nav.main-nav ul li a:hover {
+          opacity: 1;
+          color: #fff;
+          background: linear-gradient(to bottom, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.15)); }
+        nav.main-nav ul li a.active {
+          box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.3);
+          background: #D3410E; }
 
-nav a { color: #000; }
-nav a:hover { color: #ababab; }
-nav a.active { color: blue; }
+nav.sub-nav {
+  overflow: visible;
+  margin: 0;
+  padding: 0;
+  background: #f8f8f8;
+  border-bottom: 1px solid #dadada;
+  width: 100%;
+  height: 40px; }
+  nav.sub-nav ul {
+    float: left;
+    list-style: none;
+    text-align: center;
+    margin: 0; }
+    nav.sub-nav ul li {
+      margin: 0;
+      float: left;
+      position: relative; }
+      nav.sub-nav ul li a {
+        line-height: 40px;
+        color: #888;
+        padding: 0 15px;
+        display: inline-block;
+        height: 40px;
+        text-decoration: none;
+        font-weight: bold; }
+        nav.sub-nav ul li a.active {
+          color: #000; }
+          nav.sub-nav ul li a.active:after, nav.sub-nav ul li a.active:before {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            height: 0;
+            width: 0;
+            left: 50%;
+            margin: 0 0 -1px -8px;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent; }
+          nav.sub-nav ul li a.active:after {
+            border-bottom: 10px solid #fff; }
+          nav.sub-nav ul li a.active:before {
+            border-bottom: 10px solid #dadada;
+            margin: 0 0 0px -8px; }
+        nav.sub-nav ul li a:hover {
+          color: #555; }
+
+/*================================
+=            SINGLES PARTIAL            =
+================================*/
+.singles .rank {
+  padding: 10px;
+  text-align: center; }
+  .singles .rank small {
+    font-size: 18px;
+    color: #555; }
+    .singles .rank small:first-of-type {
+      float: left; }
+    .singles .rank small:nth-of-type(2) {
+      font-size: 14px;
+      color: #555; }
+      .singles .rank small:nth-of-type(2) span {
+        font-size: 24px;
+        color: #f05924; }
+  .singles .rank .your-rank {
+    font-size: 190px;
+    color: #f05924; }
+.singles .scoreboard .chart table {
+  width: 100%;
+  text-align: center;
+  border: none;
+  color: #888;
+  border-bottom: 1px solid #ababab; }
+  .singles .scoreboard .chart table thead td {
+    text-align: center;
+    color: #555; }
+  .singles .scoreboard .chart table tbody td {
+    color: #888; }
+  .singles .scoreboard .chart table tbody tr:nth-child(even) {
+    background-color: rgba(240, 89, 36, 0.1); }
+.singles .scoreboard div:not(.chart) {
+  text-align: center;
+  width: 49%;
+  margin: 0;
+  padding: 0;
+  display: inline-block; }
+  .singles .scoreboard div:not(.chart) h4 {
+    font-weight: bold;
+    font-size: 18px;
+    color: #555; }
+  .singles .scoreboard div:not(.chart) p {
+    color: #888; }
+.singles .scoreboard .win-percentage {
+  border-right: 1px solid #ababab; }
+.singles #pie-chart {
+  height: 240px;
+  width: 240px; }
+
+.add-game-modal .close-reveal-modal {
+  color: #888; }
+  .add-game-modal .close-reveal-modal:hover {
+    color: #555; }
+
+/*==================================
+=            LOGIN PARTIAL         =
+==================================*/
+.login {
+  margin-top: 5em; }
+  .login h4 {
+    text-align: center; }
+  .login button {
+    float: right;
+    background: #f05924; }
+    .login button:hover {
+      opacity: 0.9; }

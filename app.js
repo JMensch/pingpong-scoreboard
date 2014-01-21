@@ -2,17 +2,15 @@
 /**
  * Module dependencies.
  */
-
-var express = require('express')
-  , routes = require('./routes')
-  // , api = require('./routes/api')
-  , http = require('http')
-  , path = require('path');
+var express = require('express'),
+	mongo = require("./db.js"),
+    routes = require('./routes'),
+    api = require('./routes/api'),
+    http = require('http'),
+    path = require('path');
 
 var app = express();
-
-var Mongoose = require('mongoose');
-var db = Mongoose.createConnection('localhost', 'mytestapp');
+	mongo.testDB();
 // all environments
 app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/views');
@@ -26,7 +24,13 @@ app.use(app.router);
 // development only
 if ('development' == app.get('env')) {
   app.use(express.errorHandler());
+  app.use(express.favicon());
 }
+
+// production only
+if (app.get('env') === 'production') {
+  // TODO
+};
 
 /**
 * App Routing
@@ -34,7 +38,16 @@ if ('development' == app.get('env')) {
 app.get('/', routes.index);
 app.get('/partials/:type', routes.partials);
 
+/**
+* API routing
+**/
+app.post('/api/login', api.login);
+app.post('/api/user_info', api.user_info);
 
+/**
+* Catch-all
+**/
+app.get('*', routes.index);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

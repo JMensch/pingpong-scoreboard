@@ -16,25 +16,47 @@
         <link rel="stylesheet" href="stylesheets/style.css">	  
 	</head>
 
-	<body>
+	<body ng-controller="mainCtrl">
 		<header>
-			<nav>
-				<ul>
-					<li><a href="singles">Singles</a></li>
-					<li><a href="doubles">Doubles</a></li>
-				</ul>
+			<nav class="main-nav">
+				<div class="row">
+					<div class="small-12 columns">
+						<a href="#"><img src="public/img/Tembo_Logo.png"/></a>
+						<ul class="">
+							<li><a href="#">Logout</a></li>
+							<li><a href="#">Help</a></li>
+							<li><a href="#" data-reveal-id="add-game-modal">Add Game</a></li>
+						</ul>
+					</div>
+				</div>
+			</nav>
+			<nav class="sub-nav">
+				<div class="row">
+					<div class="small-12 columns">
+						<ul>
+							<li><a ng-class="{active:isActive('/singles')}" href="singles">Singles</a></li>
+							<li><a ng-class="{active:isActive('/doubles')}" href="doubles">Doubles</a></li>
+						</ul>
+					</div>
+				</div>
 			</nav>
 		</header>
 		<div ng-view class="row">
+		</div>
+		<div ng-controller="modalCtrl" id="add-game-modal" class="reveal-modal add-game-modal" data-reveal> 
+			<h2>testing!</h2>
+			<a class="close-reveal-modal">&#215;</a>
 		</div>
 
 	  	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 		<script src="javascripts/vendor/modernizr.js"></script>
 	  	<script src="javascripts/vendor/foundation.min.js"></script>
+	  	<script src="javascripts/vendor/highcharts.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.2/angular.min.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.2/angular-route.js"></script>
 	  	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.2/angular-resource.js"></script>
-	  	<!--<script src="js/vendor/underscore-min.js"></script>-->
+	  	<script src="javascripts/vendor/underscore.min.js"></script>
 	  	<script src="javascripts/angular.js"></script>
+	  	<script>$(document).foundation();</script>
 	</body>
 </html>
