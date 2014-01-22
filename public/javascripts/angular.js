@@ -46,34 +46,34 @@ myApp.controller('singlesCtrl', function($scope, $http, $location, chartFactory)
 	      	var user_data = data.data.user_data;
 	      	var games = data.data.games;
 	      	var index,
-	      		chart_data = [];
+	      		chart_data = [],
+	      		bar_data = [];
     			$scope.chart = [],
     			$scope.chart_error,
 	      		user_id = localStorage['user_id'];
-
 	      	$scope.total_players = user_data.length;
+	      	var total_games = games.length;
 	      	/**
-	      	* Build pie chart data
+	      	* Build sparkline data
 	      	**/
-	      	var opponents = _.uniq(_.pluck(games, 'opponent'));
-	      	_.each(opponents, function (opponent) { chart_data.push({ name: opponent, wins: 0, losses: 0 })});
-	      	_.each(games, function (game) {
-	      		var index = _.find(chart_data, function (player) { return player.name == game.opponent });
-	      		//if game was a win
-	      		if (game.outcome) {
-	      			index.wins = index.wins + 1;
+	      	for (var x=0, y=games.length; /*x < y &&*/ x < 20; x++) {
+	      		if (games[x]) {
+		      		var outcome = (games[x].outcome) ? 1 : -1;
+		      		var outcome_text = (games[x].outcome) ? 'Win' : 'Loss';
+		      		bar_data.push([""+outcome_text+"<br/>vs "+games[x].opponent+"<br/>"+games[x].timestamp, outcome]);
+		      	//for testing
 	      		} else {
-	      			index.losses = index.losses + 1;
+	      			if (x % 2) {
+	      				var outcome = 1,
+	      					outcome_text = "Win";
+	      			} else {
+	      				var outcome = -1,
+	      					outcome_text = "Loss";
+	      			}
+	      			bar_data.push([""+outcome_text+"<br/>vs "+bar_data[x-1].opponent+"<br/>"+bar_data[x-1].timestamp, outcome]);
 	      		}
-	      	});
-	      	//calculate win percentage
-	      	_.each(chart_data, function (opponent) { opponent.y = (opponent.wins / (opponent.wins + opponent.losses))*100 });
-	      	var max = _.max(chart_data, function (opponent) { return opponent.y });
-	      		max.sliced = true,
-	      		max.selected = true;
-	      		
-	      	chartFactory.insertPie(chart_data);
-	      	
+	      	}
+	      	chartFactory.insertBars(bar_data);
 	      	/**
 	      	* Build table
 	      	**/
@@ -89,7 +89,7 @@ myApp.controller('singlesCtrl', function($scope, $http, $location, chartFactory)
 		  				$scope.rank = i+1;
 						$scope.total_wins = user_data[i].total_wins;
 	      				$scope.total_losses = user_data[i].total_losses;
-	      				$scope.win_pct = user_data[i].win_pct.toPrecision(3);
+	      				$scope.total_win_pct = user_data[i].total_win_pct.toPrecision(3);
 
 	      				//1 rank below user
 	      				$scope.chart[1] = user_data[i+1];
@@ -107,7 +107,7 @@ myApp.controller('singlesCtrl', function($scope, $http, $location, chartFactory)
 		  				$scope.rank = i+1;
 						$scope.total_wins = user_data[i].total_wins;
 	      				$scope.total_losses = user_data[i].total_losses;
-	      				$scope.win_pct = user_data[i].win_pct.toPrecision(3);
+	      				$scope.total_win_pct = user_data[i].total_win_pct.toPrecision(3);
 
 	      				//1 rank above user
 	      				$scope.chart[1] = user_data[i-1];
@@ -128,7 +128,7 @@ myApp.controller('singlesCtrl', function($scope, $http, $location, chartFactory)
 		  				$scope.rank = i+1;
 						$scope.total_wins = user_data[i].total_wins;
 	      				$scope.total_losses = user_data[i].total_losses;
-	      				$scope.win_pct = user_data[i].win_pct.toPrecision(3);
+	      				$scope.total_win_pct = user_data[i].total_win_pct.toPrecision(3);
 	      		
 		  				//previous rank player
 		  				$scope.chart[2] = user_data[i+1];
@@ -139,6 +139,36 @@ myApp.controller('singlesCtrl', function($scope, $http, $location, chartFactory)
 	  		if (isNaN(index)) {
 	  			$scope.chart_error = 'There was an error loading score data.';	
 	  		}
+	  		console.log($scope.chart);
+	  		/**
+	      	* Build pie chart data
+	      	**/
+	      	var opponents = _.uniq(_.pluck(games, 'opponent'));
+	      	_.each(opponents, function (opponent) { chart_data.push({ name: opponent, wins: 0, losses: 0 })});
+	      	_.each(games, function (game) {
+	      		var index = _.find(chart_data, function (player) { return player.name == game.opponent });
+	      		//if game was a win
+	      		if (game.outcome) {
+	      			index.wins = index.wins + 1;
+	      		} else {
+	      			index.losses = index.losses + 1;
+	      		}
+	      	});
+	      	//calculate win percentage
+	      	_.each(chart_data, function (opponent) { 
+	      		for (var a=0,b=$scope.chart.length; a < b; a++) {
+	      			if ($scope.chart[a]['username'] == opponent.name) {
+	      				var win_pct = opponent.wins / (opponent.wins + opponent.losses);
+	      				$scope.chart[a]['win_pct'] = win_pct.toPrecision(3);
+	      			}
+	      		}
+	      		opponent.y = opponent.wins / total_games;
+	      	});
+	      	var max = _.max(chart_data, function (opponent) { return opponent.y });
+	      		max.sliced = true,
+	      		max.selected = true;
+	      		console.log(chart_data);
+	      	chartFactory.insertPie(chart_data);
     	} else {
     		$scope.total_wins = 'Error!';
     	}
@@ -211,14 +241,24 @@ myApp.factory('chartFactory', function() {
 	                plotShadow: false
 	            },
 	            title: {
-	                text: 'Win Percentage',
+	                text: 'Percentage of Wins',
 	            },
 	            tooltip: {
-	        	    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>',
+	        	    pointFormat: '{series.name}: <b>{point.percentage:.0f}%</b>',
 	        	    positioner: function() {
 	        	    	return { x: 60, y: 190 };
 	        	    }
 	            },
+	            colors: [
+	            	'#F05824',
+	            	'#F09624',
+	            	'#1F6999',
+	            	'#19A763',
+	            	'#9C310C',
+	            	'#F8C484',
+	            	'#72A9CC',
+	            	'#70D3A4'
+	            ],
 	            credits: {
 	            	enabled: false
 	            },
@@ -242,6 +282,86 @@ myApp.factory('chartFactory', function() {
 	                data: chart_data
 	            }]
 	        });
+		},
+		insertBars: function(bar_data) {
+			$(function () {
+		        $('#sparkline').highcharts({
+		            chart: {
+		                type: 'column'
+		            },
+		            title: {
+		                text: 'Recent Games'
+		            },
+		            tooltip: {
+		                headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
+		                pointFormat: ''
+		            },
+		            plotOptions: {
+		                series: {           
+		                    pointPadding: 0,
+		                    groupPadding: 0,
+		                    borderWidth: 0,
+		                    pointWidth: 35
+		                }
+		            },
+                        // legend: {
+                        //     enabled: true,
+                        //     layout: 'vertical',
+                        //     align: 'right',
+                        //     verticalAlign: 'top',
+                        //     x: 10,
+                        //     y: 100,
+                        //     borderWidth: 0
+                        // },
+		            xAxis: {  
+		            	min: 0,
+		            	max: 19,          
+		               gridLineWidth: 0,
+		               minorGridLineWidth: 0,
+		               lineColor: 'transparent',                        
+		               labels: {
+		                   enabled: false
+		               },
+		               minorTickLength: 0,
+		               tickLength: 0,
+		               title : {
+		                    text : null
+		                }
+		            },
+		            yAxis: {
+		               gridLineWidth: 0,
+		               lineWidth: 1,
+		                plotLines: [{
+                			color: '#ababab',
+                			width: 1,
+                			value: 0
+            			}],
+		               minorGridLineWidth: 0,
+		               lineColor: 'transparent',                        
+		               labels: {
+		                   enabled: false
+		               },
+		               minorTickLength: 0,
+		               tickLength: 0,
+		               title : {
+		                    text : null
+		                }
+		            },
+		            legend: {
+		                enabled: false
+		            },
+		            credits: {
+		                enabled: false
+		            },
+		            series: [{
+		                name: null,
+		                //visible: false,
+		                data: bar_data.reverse(),
+		                color: '#F05924',
+		                negativeColor: '#555',
+		            }]
+		        });
+		    });
 		}
 	};
 });

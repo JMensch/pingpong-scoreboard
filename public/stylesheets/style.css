@@ -129,9 +129,16 @@ nav.sub-nav {
     color: #888; }
 .singles .scoreboard .win-percentage {
   border-right: 1px solid #ababab; }
-.singles #pie-chart {
-  height: 240px;
-  width: 240px; }
+.singles .pie-chart-wrapper {
+  height: 240px; }
+  .singles .pie-chart-wrapper div {
+    width: 100%;
+    height: 100%; }
+.singles .sparkline-wrapper {
+  margin-top: 50px;
+  height: 200px; }
+  .singles .sparkline-wrapper div {
+    height: 100%; }
 
 .add-game-modal .close-reveal-modal {
   color: #888; }
