@@ -33,13 +33,6 @@ myApp.controller('mainCtrl', function($scope, $location) {
     $scope.isActive = function(route) {
         return route === $location.path();
     };
-    $scope.sliderChange = function(side) {
-    	if (side == 'left') {
-    		$scope.slider_left = $("#slider-left").slider("value");
-    	} else {
-    		$scope.slider_right = $("#slider-right").slider("value"); 
-    	}
-    }
 
 });
 myApp.controller('singlesCtrl', function($scope, $http, $location, chartFactory, $rootScope) {
@@ -50,6 +43,7 @@ myApp.controller('singlesCtrl', function($scope, $http, $location, chartFactory,
       	url: '/api/user_info'
     }).
     success(function (data, status, headers, config) {
+    	console.log(data);
     	if (!$.isEmptyObject(data)) {
 	      	/**
 	      	* General user information
@@ -66,8 +60,10 @@ myApp.controller('singlesCtrl', function($scope, $http, $location, chartFactory,
 	      	* Build charts
 	      	**/	      	
 	      	chartFactory.makeChartData(user_data, $scope);
-	      	chartFactory.makeBarData(games);
-	      	chartFactory.makePieData(games, $scope);
+	      	if (games.length > 0) {
+	      		chartFactory.makeBarData(games);
+	      		chartFactory.makePieData(games, $scope);
+	      	}
 
 	      	/**
 	      	* Build player list for scores entry
@@ -100,9 +96,10 @@ myApp.controller('modalCtrl', function($scope, $http, $location) {
 	$scope.slider_right = 0;
 	/**
 	* added game scores
+	* [0] -> scores_left
+	* [0] -> scores_right
 	**/
-	$scope.scores_left = [];
-	$scope.scores_right = [];
+	$scope.scores = [ [], [] ];
 	/**
 	* selected teammates
 	**/
@@ -173,30 +170,44 @@ myApp.controller('modalCtrl', function($scope, $http, $location) {
     		$('.score-container .eleven').removeClass('active');
     		$('.score-container .twentyone').addClass('active');
     	}
-    }
-    $scope.addGame = function(side) {
+    };
+    $scope.sliderChange = function(side) {
     	if (side == 'left') {
-    		if ($scope.scores_left.length > 4) {
-    			return false;
-    		}
-    		if ($scope.selected_left.length > 0 && $scope.selected_left.length > 0) {
-    			finalized = true;
-    			$('.player-select-button:not(.active)').attr('disabled', 'disabled');
-    		}
-    		$('.players-select .series:not(.active)').attr('disabled', 'disabled');
-    		$scope.scores_left.push($scope.slider_left);
+    		$scope.slider_left = $("#slider-left").slider("value");
     	} else {
-    		if ($scope.scores_right.length > 4) {
-    			return false;
-    		}
-    		if ($scope.selected_left.length > 0 && $scope.selected_left.length > 0) {
-    			finalized = true;
-    			$('.player-select-button:not(.active)').attr('disabled', 'disabled');
-    		}
-    		$('.players-select .series:not(.active)').attr('disabled', 'disabled');
-    		$scope.scores_right.push($scope.slider_right);
+    		$scope.slider_right = $("#slider-right").slider("value"); 
     	}
-    }
+    };
+    $scope.addGame = function() {  
+    	if ($scope.scores[0].length > 4) {
+    		return false;
+    	}
+		finalized = true;
+		$('.player-select-button:not(.active)').attr('disabled', 'disabled');
+		$('.series-switch-container .series:not(.active').attr('disabled', 'disabled');
+		
+		$scope.scores[0].push($scope.slider_left);
+		$scope.scores[1].push($scope.slider_right);  	
+    };
+    $scope.removeGame = function(side) {
+    	if ($scope.scores[0].length > 0 && $scope.scores[1].length > 0) {
+    		$scope.scores[0].pop();
+    		$scope.scores[1].pop();
+    	}
+    };
+    $scope.resetModal = function() {
+    	$scope.slider_right = 0;
+    	$scope.slider_left = 0;
+    	$scope.scores[0] = [];
+    	$scope.scores[1] = [];
+    	$scope.selected_left = [];
+    	$scope.selected_right = [];
+
+    	$('.series').show();
+    	$('#add-game-modal table td').empty();
+    	$('#add-game-modal').find('.active').removeClass('active');
+    	$('.player-select .button').removeAttr('disabled');
+    };
 });
 
 myApp.controller('loginCtrl', function($scope, $http, $location) {

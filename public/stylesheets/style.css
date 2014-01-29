@@ -101,7 +101,7 @@ nav.sub-nav {
         font-size: 24px;
         color: #f05924; }
   .singles .rank .your-rank {
-    font-size: 190px;
+    font-size: 8em;
     color: #f05924; }
 .singles .scoreboard .chart table {
   width: 100%;
@@ -141,7 +141,11 @@ nav.sub-nav {
   .singles .sparkline-wrapper div {
     height: 100%; }
 
+/*======================================
+=            ADD GAME MODAL            =
+======================================*/
 .add-game-modal {
+  padding: 1.5em;
   overflow: auto;
   color: #555;
   top: 50px; }
@@ -149,9 +153,61 @@ nav.sub-nav {
     color: #888; }
     .add-game-modal .close-reveal-modal:hover {
       color: #555; }
+  .add-game-modal .settings-container {
+    margin: 0.5em;
+    margin-top: 15%; }
+    .add-game-modal .settings-container .current-series {
+      width: 100%; }
+      .add-game-modal .settings-container .current-series table {
+        width: 100%;
+        height: 5em;
+        min-height: 4em;
+        background: #ededed;
+        border: none; }
+        .add-game-modal .settings-container .current-series table tr {
+          background: #ededed; }
+          .add-game-modal .settings-container .current-series table tr.score-left {
+            border-right: 1px solid #ababab; }
+        .add-game-modal .settings-container .current-series table th {
+          width: 50%;
+          text-align: center; }
+          .add-game-modal .settings-container .current-series table th.team-left {
+            border-right: 1px solid #ababab; }
+        .add-game-modal .settings-container .current-series table td {
+          text-align: center;
+          font-size: 1em;
+          color: #555; }
+          .add-game-modal .settings-container .current-series table td.team {
+            font-weight: bold; }
+          .add-game-modal .settings-container .current-series table td.active {
+            font-weight: bold;
+            color: #f05924; }
+    .add-game-modal .settings-container .series-scores-container {
+      margin-top: 0.5em;
+      overflow: auto; }
+      .add-game-modal .settings-container .series-scores-container a {
+        width: 100%;
+        background: #555; }
+        .add-game-modal .settings-container .series-scores-container a:active {
+          background: #f05924; }
+      .add-game-modal .settings-container .series-scores-container ul {
+        list-style: none;
+        margin: 0; }
+      .add-game-modal .settings-container .series-scores-container li {
+        width: 50%; }
+    .add-game-modal .settings-container .series-switch-container {
+      overflow: auto; }
+      .add-game-modal .settings-container .series-switch-container a {
+        width: 100%;
+        margin: 0;
+        background: #555; }
+        .add-game-modal .settings-container .series-switch-container a.active {
+          background: #f05924; }
+      .add-game-modal .settings-container .series-switch-container li {
+        width: 50%; }
   .add-game-modal .players-select {
     float: left;
-    width: 49%;
+    width: 43%;
     border: 1px solid #ebebeb;
     height: 80%;
     background: #ededed;
@@ -179,36 +235,8 @@ nav.sub-nav {
         background: #f05924;
         border: #f05924;
         cursor: move; }
-    .add-game-modal .players-select .score .series-scores {
-      margin-top: 0.5em;
-      display: inline-block;
-      overflow: auto;
-      float: left; }
-      .add-game-modal .players-select .score .series-scores .button {
-        display: block; }
-      .add-game-modal .players-select .score .series-scores a {
-        float: left;
-        background: #555;
-        margin-bottom: 0.5em;
-        margin-top: 1em; }
-        .add-game-modal .players-select .score .series-scores a:active {
-          background: #f05924; }
-      .add-game-modal .players-select .score .series-scores ul {
-        list-style: none;
-        margin: 0; }
-    .add-game-modal .players-select .score .series-switch-container {
-      overflow: auto;
-      margin-top: 1em;
-      display: inline-block;
-      float: right; }
-      .add-game-modal .players-select .score .series-switch-container a {
-        margin-bottom: 0.5em;
-        display: block;
-        background: #555; }
-        .add-game-modal .players-select .score .series-switch-container a.active {
-          background: #f05924; }
   .add-game-modal .players-submit {
-    margin: 1em auto;
+    margin: 0.5em auto;
     height: 5em;
     width: 30%;
     text-align: center; }
