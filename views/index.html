@@ -13,6 +13,7 @@
         <![endif]-->
         <link rel="stylesheet" href="stylesheets/normalize.css">
         <link rel="stylesheet" href="stylesheets/foundation.min.css">
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
         <link rel="stylesheet" href="stylesheets/style.css">	  
 	</head>
 
@@ -21,11 +22,12 @@
 			<nav class="main-nav">
 				<div class="row">
 					<div class="small-12 columns">
-						<a href="#"><img src="public/img/Tembo_Logo.png"/></a>
+						<a href="#"><img src="img/Tembo_Pong.png"/></a>
 						<ul class="">
 							<li><a href="#">Logout</a></li>
-							<li><a href="#">Help</a></li>
+							<li><a href="#" data-reveal-id="help-modal">Help</a></li>
 							<li><a href="#" data-reveal-id="add-game-modal">Add Game</a></li>
+							<li ng-class="{hidden:error_banner}">{{error_banner}}</li>
 						</ul>
 					</div>
 				</div>
@@ -41,17 +43,75 @@
 				</div>
 			</nav>
 		</header>
-		<div ng-view class="row">
-		</div>
+		<div ng-view class="row"></div>
+
+		<!-- Add Games Modal -->
 		<div ng-controller="modalCtrl" id="add-game-modal" class="reveal-modal add-game-modal" data-reveal> 
-			<h2>testing!</h2>
+			<div class="players-select left">
+				<h4>Select team one players</h4>
+				<div class="button-container">
+					<a ng-repeat="player in players_for_buttons_left" ng-click="select('left', player)" ng-class="itemClass('left', player)" class="tiny button radius player-select-button" data-id="{{player.id}}">{{player.name}}</a>
+				</div>
+				<div class="score">
+					<h4>Team one score</h4>
+					<div class="score-container">
+						<div class="series-scores">
+							<a ng-click="addGame('left')" href="#" class="tiny button radius">+</a>
+							<ul>
+								<li ng-repeat="score in scores_left track by $index">{{score}}</li>
+							</ul>
+						</div>
+						<span>{{slider_left}}</span>
+						<div class="series-switch-container">	
+							<a ng-click = "seriesSwitch('eleven')" href="#" class="tiny button radius series eleven">11</a>
+							<a ng-click = "seriesSwitch('twentyone')" href="#" class="tiny button radius active series twentyone">21</a>
+						</div>
+						<div class="clearfix"></div>
+						<div id="slider-left"></div>
+					</div>
+				</div>
+			</div>
+			<div class="players-select right">
+				<h4>Select team two players</h4>
+				<div class="button-container">
+					<a ng-repeat="player in players_for_buttons_right" ng-click="select('right', player)" ng-class="itemClass('right', player)" class="tiny button radius player-select-button" data-id="{{player.id}}">{{player.name}}</a>
+				</div>
+				<div class="score">
+					<h4>Team two score</h4>
+					<div class="score-container">
+						<div class="series-scores">
+							<a ng-click="addGame('right')" href="#" class="tiny button radius">+</a>
+							<ul>
+								<li ng-repeat="score in scores_right track by $index">{{score}}</li>
+							</ul>
+						</div>
+						<span>{{slider_right}}</span>
+						<div class="series-switch-container">	
+							<a ng-click = "seriesSwitch('eleven')" href="#" class="tiny button radius series eleven">11</a>
+							<a ng-click = "seriesSwitch('twentyone')" href="#" class="tiny button radius active series twentyone">21</a>
+						</div>
+						<div class="clearfix"></div>
+						<div id="slider-right"></div>
+					</div>
+				</div>
+			</div>
+			<div class="clearfix"></div>
+			<div class="players-submit">
+				<span><a href="#" class="button player-submit-button">Submit Series</a> <!-- or <a href="#" class="player-cancel-button">cancel</a> --></span>
+			</div>
 			<a class="close-reveal-modal">&#215;</a>
+		</div>
+
+		<!-- Help Modal -->
+		<div id="help-modal" class="reveal-modal" data-reveal>
+			<h2>HELP</h2>
 		</div>
 
 	  	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 		<script src="javascripts/vendor/modernizr.js"></script>
 	  	<script src="javascripts/vendor/foundation.min.js"></script>
 	  	<script src="javascripts/vendor/highcharts.js"></script>
+	  	<script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.2/angular.min.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.2/angular-route.js"></script>
 	  	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.2/angular-resource.js"></script>

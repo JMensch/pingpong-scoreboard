@@ -10,7 +10,8 @@ nav.main-nav {
   background: -webkit-linear-gradient(top, #f26b3c, #f05924);
   box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2); }
   nav.main-nav img {
-    float: left; }
+    float: left;
+    margin-top: 9px; }
   nav.main-nav ul {
     float: right;
     list-style: none;
@@ -140,10 +141,85 @@ nav.sub-nav {
   .singles .sparkline-wrapper div {
     height: 100%; }
 
-.add-game-modal .close-reveal-modal {
-  color: #888; }
-  .add-game-modal .close-reveal-modal:hover {
-    color: #555; }
+.add-game-modal {
+  overflow: auto;
+  color: #555;
+  top: 50px; }
+  .add-game-modal .close-reveal-modal {
+    color: #888; }
+    .add-game-modal .close-reveal-modal:hover {
+      color: #555; }
+  .add-game-modal .players-select {
+    float: left;
+    width: 49%;
+    border: 1px solid #ebebeb;
+    height: 80%;
+    background: #ededed;
+    border-radius: 10px; }
+    .add-game-modal .players-select h4 {
+      text-align: center; }
+    .add-game-modal .players-select .button-container {
+      text-align: center; }
+      .add-game-modal .players-select .button-container .player-select-button {
+        margin: 1em 0.5em;
+        background: #555;
+        width: 25%; }
+        .add-game-modal .players-select .button-container .player-select-button.active {
+          background: #f05924; }
+    .add-game-modal .players-select .score .score-container {
+      margin: 1em 2em;
+      margin-top: 0;
+      text-align: center; }
+      .add-game-modal .players-select .score .score-container span {
+        font-size: 8em; }
+      .add-game-modal .players-select .score .score-container .ui-slider {
+        background: #555;
+        margin-top: 1em; }
+      .add-game-modal .players-select .score .score-container .ui-slider-handle {
+        background: #f05924;
+        border: #f05924;
+        cursor: move; }
+    .add-game-modal .players-select .score .series-scores {
+      margin-top: 0.5em;
+      display: inline-block;
+      overflow: auto;
+      float: left; }
+      .add-game-modal .players-select .score .series-scores .button {
+        display: block; }
+      .add-game-modal .players-select .score .series-scores a {
+        float: left;
+        background: #555;
+        margin-bottom: 0.5em;
+        margin-top: 1em; }
+        .add-game-modal .players-select .score .series-scores a:active {
+          background: #f05924; }
+      .add-game-modal .players-select .score .series-scores ul {
+        list-style: none;
+        margin: 0; }
+    .add-game-modal .players-select .score .series-switch-container {
+      overflow: auto;
+      margin-top: 1em;
+      display: inline-block;
+      float: right; }
+      .add-game-modal .players-select .score .series-switch-container a {
+        margin-bottom: 0.5em;
+        display: block;
+        background: #555; }
+        .add-game-modal .players-select .score .series-switch-container a.active {
+          background: #f05924; }
+  .add-game-modal .players-submit {
+    margin: 1em auto;
+    height: 5em;
+    width: 30%;
+    text-align: center; }
+    .add-game-modal .players-submit .player-submit-button {
+      border-radius: 8px;
+      background: #f05924; }
+      .add-game-modal .players-submit .player-submit-button:hover {
+        opacity: 0.9; }
+    .add-game-modal .players-submit .player-cancel-button {
+      text-decoration: underline;
+      color: #555; }
 
 /*==================================
 =            LOGIN PARTIAL         =

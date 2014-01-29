@@ -21,8 +21,8 @@ var myApp = angular.module('myApp', ['ngRoute', 'ngResource']).
 			});
 	$locationProvider.html5Mode(true);
 	}])
-	.run(function ($rootScope, authService, $location) {   
-		if (authService.auth()) {
+	.run(function ($rootScope, authService, $location) { 
+      	if (authService.auth()) {
 			$location.path('/singles');
 		}
 	});
@@ -33,8 +33,16 @@ myApp.controller('mainCtrl', function($scope, $location) {
     $scope.isActive = function(route) {
         return route === $location.path();
     };
+    $scope.sliderChange = function(side) {
+    	if (side == 'left') {
+    		$scope.slider_left = $("#slider-left").slider("value");
+    	} else {
+    		$scope.slider_right = $("#slider-right").slider("value"); 
+    	}
+    }
+
 });
-myApp.controller('singlesCtrl', function($scope, $http, $location, chartFactory) {
+myApp.controller('singlesCtrl', function($scope, $http, $location, chartFactory, $rootScope) {
 	var json_data = JSON.stringify({user_id: JSON.parse(localStorage['user_id'])});
 	$http({
     	method: 'POST',
@@ -43,41 +51,227 @@ myApp.controller('singlesCtrl', function($scope, $http, $location, chartFactory)
     }).
     success(function (data, status, headers, config) {
     	if (!$.isEmptyObject(data)) {
-	      	var user_data = data.data.user_data;
-	      	var games = data.data.games;
-	      	var index,
-	      		chart_data = [],
-	      		bar_data = [];
-    			$scope.chart = [],
-    			$scope.chart_error,
-	      		user_id = localStorage['user_id'];
-	      	$scope.total_players = user_data.length;
-	      	var total_games = games.length;
 	      	/**
-	      	* Build sparkline data
+	      	* General user information
 	      	**/
-	      	for (var x=0, y=games.length; /*x < y &&*/ x < 20; x++) {
-	      		if (games[x]) {
-		      		var outcome = (games[x].outcome) ? 1 : -1;
-		      		var outcome_text = (games[x].outcome) ? 'Win' : 'Loss';
-		      		bar_data.push([""+outcome_text+"<br/>vs "+games[x].opponent+"<br/>"+games[x].timestamp, outcome]);
-		      	//for testing
-	      		} else {
-	      			if (x % 2) {
-	      				var outcome = 1,
-	      					outcome_text = "Win";
-	      			} else {
-	      				var outcome = -1,
-	      					outcome_text = "Loss";
-	      			}
-	      			bar_data.push([""+outcome_text+"<br/>vs "+bar_data[x-1].opponent+"<br/>"+bar_data[x-1].timestamp, outcome]);
+	      	var user_data = data.data.user_data;
+	      		$scope.total_players = user_data.length;
+	      	/**
+	      	* Series & game data
+	      	**/
+	      	var games = data.data.games;			
+	      	
+			
+			/**
+	      	* Build charts
+	      	**/	      	
+	      	chartFactory.makeChartData(user_data, $scope);
+	      	chartFactory.makeBarData(games);
+	      	chartFactory.makePieData(games, $scope);
+
+	      	/**
+	      	* Build player list for scores entry
+	      	**/
+	      	var temp = [];
+	      	for(var i=0, j=user_data.length; i < j; i++) {
+	      		if (user_data[i].username && user_data[i].username.length > 1) {
+	      			temp.push({ name: user_data[i].username, id: user_data[i]._id });
 	      		}
 	      	}
-	      	chartFactory.insertBars(bar_data);
-	      	/**
-	      	* Build table
-	      	**/
-	  		for(var i=0, j=user_data.length; i < j; i++) {
+	      	$rootScope.players_for_buttons_left = _(temp).sortBy('name');
+	      	$rootScope.players_for_buttons_right = $rootScope.players_for_buttons_left.slice();
+    	} else {
+    		$rootScope.error_banner = 'There was a general application error. Please try again later.';
+    	}
+    }).
+    error(function (data, status, headers, config) {
+      	$scope.total_wins = 'Error!'
+    });
+});
+
+myApp.controller('doublesCtrl', function($scope, $http, $location) {
+});
+
+myApp.controller('modalCtrl', function($scope, $http, $location) {
+	/**
+	* current slider values
+	**/
+	$scope.slider_left = 0,
+	$scope.slider_right = 0;
+	/**
+	* added game scores
+	**/
+	$scope.scores_left = [];
+	$scope.scores_right = [];
+	/**
+	* selected teammates
+	**/
+	$scope.selected_left = [];
+	$scope.selected_right = [];
+
+	var finalized = false;
+
+	$("#slider-left").slider({ 
+    	max: 30, 
+    	min: 0, 
+    	value: 0,
+    	slide: function(event, ui) {
+            $scope.slider_left = ui.value;
+            $scope.$apply();
+        },
+        change: function(event, ui) {
+            // $('#rateToPost').attr('value', ui.value);
+        }
+    });
+    $("#slider-right").slider({ 
+    	max: 30, 
+    	min: 0, 
+    	value: 0,
+    	slide: function(event, ui) {
+            $scope.slider_right = ui.value;
+            $scope.$apply();
+        },
+        change: function(event, ui) { 
+            // $('#rateToPost').attr('value', ui.value);
+        }
+    });
+	$scope.select = function(side, player) {
+		if (finalized) {
+			return false;
+		}
+		if (side == 'left') {
+			var temp_player = _.find($scope.selected_left, function (item) { return item.id == player.id });
+			if (temp_player) {
+				$scope.selected_left = _.without($scope.selected_left, temp_player);
+			} else {
+		    	$scope.selected_left.push(player); 
+			}
+		} else {
+			var temp_player = _.find($scope.selected_right, function (item) { return item.id == player.id });
+			if (temp_player) {
+				$scope.selected_right = _.without($scope.selected_right, temp_player);
+			} else {
+		    	$scope.selected_right.push(player); 
+			}
+		}
+	};
+	$scope.itemClass = function(side, player) {
+		if (side == 'left') {
+	    	return _.find($scope.selected_left, function (item) { return item.id == player.id }) ? 'active' : '';
+		} else {
+	    	return _.find($scope.selected_right, function (item) { return item.id == player.id }) ? 'active' : '';
+		}
+	};
+    $scope.seriesSwitch = function(series_type) {
+    	if (finalized) {
+    		return false;
+    	}
+    	if (series_type == 'eleven') {
+    		$('.score-container .twentyone').removeClass('active');
+    		$('.score-container .eleven').addClass('active');
+    	} else {
+    		$('.score-container .eleven').removeClass('active');
+    		$('.score-container .twentyone').addClass('active');
+    	}
+    }
+    $scope.addGame = function(side) {
+    	if (side == 'left') {
+    		if ($scope.scores_left.length > 4) {
+    			return false;
+    		}
+    		if ($scope.selected_left.length > 0 && $scope.selected_left.length > 0) {
+    			finalized = true;
+    			$('.player-select-button:not(.active)').attr('disabled', 'disabled');
+    		}
+    		$('.players-select .series:not(.active)').attr('disabled', 'disabled');
+    		$scope.scores_left.push($scope.slider_left);
+    	} else {
+    		if ($scope.scores_right.length > 4) {
+    			return false;
+    		}
+    		if ($scope.selected_left.length > 0 && $scope.selected_left.length > 0) {
+    			finalized = true;
+    			$('.player-select-button:not(.active)').attr('disabled', 'disabled');
+    		}
+    		$('.players-select .series:not(.active)').attr('disabled', 'disabled');
+    		$scope.scores_right.push($scope.slider_right);
+    	}
+    }
+});
+
+myApp.controller('loginCtrl', function($scope, $http, $location) {
+	$scope.login = function(user) {
+		var json_data = JSON.stringify(user);
+		$http({
+			method: 'POST',
+			data: json_data,
+			url: '/api/login'
+		}).
+		success(function (data, status) {
+			if (!$.isEmptyObject(data)) {
+				if (Modernizr.localstorage) {
+					localStorage['user_id'] = JSON.stringify(data.user_id);
+					$location.path("/singles");
+				} else {
+					$scope.login_error = "Please upgrade your browser.";
+				}
+			} else {
+				$scope.login_error = "There was an error. Please try again later.";
+			}
+		}).
+		error(function (data, status) {
+			$scope.login_error = "There was an error. Please try again later.";
+		});
+	};
+});
+
+myApp.service('authService', function() {
+	this.auth = function() {
+		if (Modernizr.localstorage && localStorage.user_id) {
+			return true;
+		} else {
+			return false;
+		}
+	};
+});
+
+myApp.factory('chartFactory', function() {
+	return {
+		makePieData: function(games, $scope) {
+			var chart_data = [];
+			var total_games = games.length;
+			var opponents = _.uniq(_.pluck(games, 'opponent'));
+	      	_.each(opponents, function (opponent) { chart_data.push({ name: opponent, wins: 0, losses: 0 })});
+	      	_.each(games, function (game) {
+	      		var index = _.find(chart_data, function (player) { return player.name == game.opponent });
+	      		//if game was a win
+	      		if (game.outcome) {
+	      			index.wins = index.wins + 1;
+	      		} else {
+	      			index.losses = index.losses + 1;
+	      		}
+	      	});
+	      	//calculate win percentage
+	      	_.each(chart_data, function (opponent) { 
+	      		for (var a=0,b=$scope.chart.length; a < b; a++) {
+	      			if ($scope.chart[a]['username'] == opponent.name) {
+	      				var win_pct = opponent.wins / (opponent.wins + opponent.losses);
+	      				$scope.chart[a]['win_pct'] = win_pct.toPrecision(3);
+	      			}
+	      		}
+	      		opponent.y = opponent.wins / total_games;
+	      	});
+	      	var max = _.max(chart_data, function (opponent) { return opponent.y });
+	      		max.sliced = true,
+	      		max.selected = true;
+			this.insertPie(chart_data);
+		},
+		makeChartData: function(user_data, $scope) {
+			$scope.chart = [],
+    		$scope.chart_error,
+    		index = 0,
+    		user_id = localStorage['user_id'];
+			for(var i=0, j=user_data.length; i < j; i++) {
 	  			if (JSON.stringify(user_data[i]._id) == user_id) {
 	  				index = i;
 	  				//user is ranked first
@@ -139,89 +333,30 @@ myApp.controller('singlesCtrl', function($scope, $http, $location, chartFactory)
 	  		if (isNaN(index)) {
 	  			$scope.chart_error = 'There was an error loading score data.';	
 	  		}
-	  		console.log($scope.chart);
-	  		/**
-	      	* Build pie chart data
-	      	**/
-	      	var opponents = _.uniq(_.pluck(games, 'opponent'));
-	      	_.each(opponents, function (opponent) { chart_data.push({ name: opponent, wins: 0, losses: 0 })});
-	      	_.each(games, function (game) {
-	      		var index = _.find(chart_data, function (player) { return player.name == game.opponent });
-	      		//if game was a win
-	      		if (game.outcome) {
-	      			index.wins = index.wins + 1;
+		},
+		makeBarData: function(games) {
+			var bar_data = [];
+	      	for (var x=0, y=games.length; /*x < y &&*/ x < 20; x++) {
+	      		if (games[x]) {
+		      		var outcome = (games[x].outcome) ? 1 : -1;
+		      		var outcome_text = (games[x].outcome) ? 'Win' : 'Loss';
+		      		bar_data.push([""+outcome_text+"<br/>vs "+games[x].opponent+"<br/>"+games[x].timestamp, outcome]);
+		      	//for testing
 	      		} else {
-	      			index.losses = index.losses + 1;
-	      		}
-	      	});
-	      	//calculate win percentage
-	      	_.each(chart_data, function (opponent) { 
-	      		for (var a=0,b=$scope.chart.length; a < b; a++) {
-	      			if ($scope.chart[a]['username'] == opponent.name) {
-	      				var win_pct = opponent.wins / (opponent.wins + opponent.losses);
-	      				$scope.chart[a]['win_pct'] = win_pct.toPrecision(3);
+	      			if (x % 2) {
+	      				var outcome = 1,
+	      					outcome_text = "Win";
+	      			} else {
+	      				var outcome = -1,
+	      					outcome_text = "Loss";
 	      			}
+	      			bar_data.push([""+outcome_text+"<br/>vs "+bar_data[x-1].opponent+"<br/>"+bar_data[x-1].timestamp, outcome]);
 	      		}
-	      		opponent.y = opponent.wins / total_games;
-	      	});
-	      	var max = _.max(chart_data, function (opponent) { return opponent.y });
-	      		max.sliced = true,
-	      		max.selected = true;
-	      		console.log(chart_data);
-	      	chartFactory.insertPie(chart_data);
-    	} else {
-    		$scope.total_wins = 'Error!';
-    	}
-    }).
-    error(function (data, status, headers, config) {
-      	$scope.total_wins = 'Error!'
-    });
-});
-
-myApp.controller('doublesCtrl', function($scope, $http, $location) {
-});
-
-myApp.controller('modalCtrl', function($scope, $http, $location) {
-});
-
-myApp.controller('loginCtrl', function($scope, $http, $location) {
-	$scope.login = function(user) {
-		var json_data = JSON.stringify(user);
-		$http({
-			method: 'POST',
-			data: json_data,
-			url: '/api/login'
-		}).
-		success(function (data, status) {
-			if (!$.isEmptyObject(data)) {
-				if (Modernizr.localstorage) {
-					localStorage['user_id'] = JSON.stringify(data.user_id);
-					$location.path("/singles");
-				} else {
-					$scope.login_error = "Please upgrade your browser.";
-				}
-			} else {
-				$scope.login_error = "There was an error. Please try again later.";
-			}
-		}).
-		error(function (data, status) {
-			$scope.login_error = "There was an error. Please try again later.";
-		});
-	};
-});
-
-myApp.service('authService', function() {
-	this.auth = function() {
-		if (Modernizr.localstorage && localStorage.user_id) {
-			return true;
-		} else {
-			return false;
-		}
-	};
-});
-
-myApp.factory('chartFactory', function() {
-	return {
+	      	}
+	      	if (bar_data.length > 0) {
+				this.insertBars(bar_data);
+	      	}
+		},
 		insertPie: function(chart_data) {
 			// Radialize the colors
 			Highcharts.getOptions().colors = Highcharts.map(Highcharts.getOptions().colors, function(color) {
@@ -292,6 +427,14 @@ myApp.factory('chartFactory', function() {
 		            title: {
 		                text: 'Recent Games'
 		            },
+                    legend: {
+                        layout: 'vertical',
+                        align: 'right',
+                        verticalAlign: 'top',
+                        x: -40,
+                        y: 100,
+                        borderWidth: 0
+                    },
 		            tooltip: {
 		                headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
 		                pointFormat: ''
@@ -304,15 +447,6 @@ myApp.factory('chartFactory', function() {
 		                    pointWidth: 35
 		                }
 		            },
-                        // legend: {
-                        //     enabled: true,
-                        //     layout: 'vertical',
-                        //     align: 'right',
-                        //     verticalAlign: 'top',
-                        //     x: 10,
-                        //     y: 100,
-                        //     borderWidth: 0
-                        // },
 		            xAxis: {  
 		            	min: 0,
 		            	max: 19,          
@@ -348,14 +482,13 @@ myApp.factory('chartFactory', function() {
 		                }
 		            },
 		            legend: {
-		                enabled: false
+		                enabled: true
 		            },
 		            credits: {
 		                enabled: false
 		            },
 		            series: [{
-		                name: null,
-		                //visible: false,
+		                name: 'wins',
 		                data: bar_data.reverse(),
 		                color: '#F05924',
 		                negativeColor: '#555',
