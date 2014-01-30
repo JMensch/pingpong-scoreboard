@@ -13,6 +13,7 @@
         <![endif]-->
         <link rel="stylesheet" href="stylesheets/normalize.css">
         <link rel="stylesheet" href="stylesheets/foundation.min.css">
+        <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
         <link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
         <link rel="stylesheet" href="stylesheets/style.css">	  
 	</head>
@@ -50,7 +51,7 @@
 			<div class="players-select left small-4 columns">
 				<h4>Select team one players</h4>
 				<div class="button-container">
-					<a ng-repeat="player in players_for_buttons_left" ng-click="select('left', player)" ng-class="itemClass('left', player)" class="tiny button radius player-select-button" data-id="{{player.id}}">{{player.name}}</a>
+					<a ng-repeat="player in players_for_buttons_left | limitTo: 9" ng-click="select('left', player)" ng-class="itemClass('left', player)" class="tiny button radius player-select-button" data-id="{{player.id}}">{{player.name}}</a>
 				</div>
 				<div class="score">
 					<h4>Team one score</h4>
@@ -62,16 +63,18 @@
 				</div>
 			</div>
 			<div class="settings-container left">
-				<div class="series-switch-container">
-					<ul class="button-group radius">	
-						<li><a ng-click = "seriesSwitch('eleven')" href="#" class="tiny button series eleven">11</a></li>
-						<li><a ng-click = "seriesSwitch('twentyone')" href="#" class="tiny button active series twentyone">21</a></li>
-					</ul>
+				<div class="series-switch-container switch round">
+					<input id="x" name="game-type-switch" type="radio">
+ 					<label for="x" onclick="">11</label>
+
+					<input id="x1" name="game-type-switch" type="radio" checked>
+					<label for="x1" onclick="">21</label>
+					<span></span>
 				</div>
 				<div class="series-scores-container">
 					<ul class="button-group radius">
-						<li><a ng-click="addGame()" href="#" class="tiny button">+</a></li>
-						<li><a ng-click="removeGame()" href="#" class="tiny button">-</a></li>
+						<li><a ng-click="addGame()" href="#" class="tiny button"><i class="fa fa-lg fa-plus"></i></a></li>
+						<li><a ng-click="removeGame()" href="#" class="tiny button"><i class="fa fa-lg fa-minus"></i></a></li>
 					</ul>
 				</div>
 				<div class="current-series">
@@ -92,7 +95,7 @@
 			<div class="players-select right small-4 columns">
 				<h4>Select team two players</h4>
 				<div class="button-container">
-					<a ng-repeat="player in players_for_buttons_right" ng-click="select('right', player)" ng-class="itemClass('right', player)" class="tiny button radius player-select-button" data-id="{{player.id}}">{{player.name}}</a>
+					<a ng-repeat="player in players_for_buttons_right | limitTo: 9" ng-click="select('right', player)" ng-class="itemClass('right', player)" class="tiny button radius player-select-button" data-id="{{player.id}}">{{player.name}}</a>
 				</div>
 				<div class="score">
 					<h4>Team two score</h4>

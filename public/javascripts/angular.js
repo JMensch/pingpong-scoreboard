@@ -99,7 +99,7 @@ myApp.controller('modalCtrl', function($scope, $http, $location) {
 	* [0] -> scores_left
 	* [0] -> scores_right
 	**/
-	$scope.scores = [ [], [] ];
+	$scope.scores = [];
 	/**
 	* selected teammates
 	**/
@@ -107,6 +107,7 @@ myApp.controller('modalCtrl', function($scope, $http, $location) {
 	$scope.selected_right = [];
 
 	var finalized = false;
+	var curr_game_length = 21;
 
 	$("#slider-left").slider({ 
     	max: 30, 
@@ -166,9 +167,11 @@ myApp.controller('modalCtrl', function($scope, $http, $location) {
     	if (series_type == 'eleven') {
     		$('.score-container .twentyone').removeClass('active');
     		$('.score-container .eleven').addClass('active');
+    		curr_game_length = 11;
     	} else {
     		$('.score-container .eleven').removeClass('active');
     		$('.score-container .twentyone').addClass('active');
+    		curr_game_length = 21;
     	}
     };
     $scope.sliderChange = function(side) {
@@ -184,10 +187,9 @@ myApp.controller('modalCtrl', function($scope, $http, $location) {
     	}
 		finalized = true;
 		$('.player-select-button:not(.active)').attr('disabled', 'disabled');
-		$('.series-switch-container .series:not(.active').attr('disabled', 'disabled');
+		// $('.series-switch-container .series:not(.active').attr('disabled', 'disabled');
 		
-		$scope.scores[0].push($scope.slider_left);
-		$scope.scores[1].push($scope.slider_right);  	
+		$scope.scores.push( { t1_score: $scope.slider_left, t2_score: $scope.slider_right, game_length: curr_game_length });
     };
     $scope.removeGame = function(side) {
     	if ($scope.scores[0].length > 0 && $scope.scores[1].length > 0) {
