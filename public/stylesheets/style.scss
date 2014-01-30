@@ -1,0 +1,355 @@
+$tembo-orange: #F05924;
+.hidden { display: none !important; }
+/*============================
+=            NAVIGATION      =
+============================*/
+nav.main-nav {
+	width: 100%;
+	height: 50px;
+	background: -webkit-linear-gradient(top, #f26b3c, $tembo-orange);
+	box-shadow: 0 1px 5px rgba(0,0,0,0.2);
+	img {
+		float:left;
+		margin-top: 9px;
+	}
+	ul {
+		float:right;
+		list-style: none;
+		text-align: center;
+		margin: 0;
+		li {
+			margin: 0;
+			float:right;
+			position:relative;
+			a {
+				position:relative;
+				padding: 0 15px;
+				display: inline-block;
+				height: 50px;
+				line-height: 50px;
+				color: #fff;
+				opacity: 0.8;
+				text-decoration: none;
+				&:hover { 
+					opacity: 1;
+					color: #fff;
+					background:linear-gradient(to bottom, rgba(255,255,255,0.1),rgba(255,255,255,0.15));
+				}
+				&.active {
+					box-shadow: inset 0 2px 6px rgba(0,0,0,0.3);
+					background:#D3410E;
+				}
+			}
+		}
+	}
+}
+nav.sub-nav {
+	overflow:visible;
+	margin: 0;
+	padding:0;
+	background: #f8f8f8;
+	border-bottom: 1px solid #dadada;
+	width: 100%;
+	height: 40px;
+	ul {
+		float:left;
+		list-style: none;
+		text-align: center;
+		margin: 0;
+		li {
+			margin: 0;
+			float:left;
+			position:relative;
+			a {
+				line-height:40px;
+				color: #888;
+				padding: 0 15px;
+				display: inline-block;
+				height: 40px;
+				text-decoration: none;
+				font-weight: bold;
+				&.active {
+					color: #000;
+					&:after, &:before {
+						content:"";
+						position: absolute;
+						bottom:0;
+						height:0;
+						width:0;
+						left: 50%;
+						margin: 0 0 -1px -8px;
+						border-left: 8px solid transparent;
+						border-right: 8px solid transparent;
+					}
+					&:after {
+						border-bottom: 10px solid #fff;
+					}
+					&:before {
+						border-bottom: 10px solid #dadada;
+						margin: 0 0 0px -8px;
+					}
+				}
+				&:hover {
+					color: #555;
+				}
+			}
+		}
+	}
+}
+/*================================
+=            SINGLES PARTIAL            =
+================================*/
+.singles {
+	.rank {
+		padding: 10px;
+		text-align: center;
+		small {
+			font-size:18px;
+			color:#555;
+			&:first-of-type {
+				float:left;
+			}
+			&:nth-of-type(2) {
+				font-size: 14px;
+				color: #555;
+				span {
+					font-size:24px;
+					color:$tembo-orange;
+				}
+			}
+		}
+		.your-rank {
+			font-size:8em;
+			color: $tembo-orange;
+		}
+	}
+	.scoreboard {
+		.chart {
+			table {
+				width:100%;
+				text-align:center;
+				border:none;
+				color:#888;
+				border-bottom: 1px solid #ababab;
+				thead {
+					td {
+						text-align:center;
+						color:#555;
+					}
+				}
+				tbody {
+					td {
+						color:#888;
+					}
+					tr:nth-child(even) {
+						background-color: rgba(240,89,36, 0.1);
+					}
+				}
+			}
+		}
+		div:not(.chart) {
+			text-align:center;
+			width:49%;
+			margin:0;
+			padding:0;
+			display: inline-block;
+			h4 {
+				font-weight: bold;
+				font-size:18px;
+				color:#555;
+			}
+			p {
+				color:#888;
+			}
+		}
+		.win-percentage {
+			border-right: 1px solid #ababab;
+		}
+	}
+	.pie-chart-wrapper {
+		height:240px;
+		// width: 240px;
+		div {
+			width: 100%;
+			height: 100%;
+		}
+	}
+	.sparkline-wrapper {
+		margin-top: 50px;
+		height: 200px;
+		div {
+			height: 100%;
+		}
+	}
+}
+
+/*======================================
+=            ADD GAME MODAL            =
+======================================*/
+.add-game-modal {
+	padding:1.5em;
+	overflow: auto;
+	color: #555;
+	top: 50px;
+	.close-reveal-modal {
+		color:#888;
+		&:hover {
+			color:#555;
+		}
+	}
+	.settings-container {
+		margin: 0.5em;
+		margin-top: 15%;
+		.current-series {
+			width:100%;
+			table {
+				width:100%;
+				height: 5em;
+				min-height: 4em;
+				// margin: 0.5em 0;
+				background: #ededed;
+				border: none;
+				tr {
+					background:#ededed;
+					&.score-left {
+						border-right: 1px solid #ababab;
+					}
+				}
+				th {
+					width: 50%;
+					text-align:center;
+					&.team-left {
+						border-right: 1px solid #ababab;
+					}
+				}
+				td {
+					// padding: 0.5rem 1rem;
+					text-align:center;
+					font-size: 1em;
+					color: #555;
+					&.team {
+						font-weight: bold;
+					}
+					&.active {
+						font-weight: bold;
+						color: $tembo-orange;
+					}
+				}
+			}
+		}
+		.series-scores-container {
+			margin-top: 0.5em;
+			overflow:auto;
+			& a {
+				width:100%;
+				background: #555;
+				&:active {
+					background: $tembo-orange;
+				}
+			}
+			ul {
+				list-style: none;
+				margin: 0;
+			}
+			li {
+				width: 50%;
+			}
+		}
+		.series-switch-container {
+			overflow:auto;
+			a {
+				width:100%;
+				margin:0;
+				background: #555;
+				&.active {
+					background: $tembo-orange;
+				}
+			}
+			li {
+				width: 50%;
+			}
+		}
+	}
+	.players-select {
+		float:left;
+		width: 43%;
+		border: 1px solid #ebebeb;
+		height: 80%;
+		background: #ededed;
+		border-radius: 10px;
+		h4 {
+			text-align:center;
+		}
+		.button-container {
+			text-align: center;
+			.player-select-button {
+				margin: 1em 0.5em;
+				background: #555;
+				width: 25%;
+				// &:hover {
+				// 	background: $tembo-orange;
+				// }
+				&.active {
+					background: $tembo-orange;
+				}
+			}
+		}
+		.score {
+			.score-container {
+				margin: 1em 2em;
+				margin-top: 0;
+				text-align:center;
+				span {
+					font-size:8em;
+				}
+				.ui-slider {
+					background: #555;
+					margin-top:1em;
+				}
+				.ui-slider-handle {
+					background: $tembo-orange;
+					border: $tembo-orange;
+					cursor: move;
+				}
+			}
+		}
+	} 
+	.players-submit {
+		margin: 0.5em auto;
+		height: 5em;
+		width: 30%;
+		text-align:center;
+		.player-submit-button {
+			border-radius: 8px;
+			// background: -webkit-linear-gradient(top, #f26b3c, $tembo-orange);
+			// box-shadow: 2px 2px 2px $tembo-orange;
+			background: $tembo-orange;
+			&:hover {
+				// background: $tembo-orange;
+				opacity: 0.9;
+			}
+		}
+		.player-cancel-button {
+			text-decoration: underline;
+			color: #555;
+		}
+	}
+}
+
+/*==================================
+=            LOGIN PARTIAL         =
+==================================*/
+.login {
+	margin-top: 5em;
+	h4 {
+		text-align:center;
+	}
+	button {
+		float:right;
+		background: $tembo-orange;
+		&:hover {
+			opacity: 0.9;
+		}
+	}
+}
+
