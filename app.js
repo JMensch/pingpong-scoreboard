@@ -45,15 +45,3 @@ http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
 
-/**
-* Comment when localhost
-**/
-var mongoclient = mongo.dbConnect();
-    var db = mongoclient.db("pingpong");
-    db.open(function (err, db) {
-        if (!err) {
-            db.auth("james", "temboparty", function (err, result) {
-                db.close();
-            });
-        }
-    })

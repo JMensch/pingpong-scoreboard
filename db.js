@@ -11,11 +11,13 @@ var MongoClient = require('mongodb').MongoClient,
 **/
 exports.dbConnect = function() {
 	var db = new MongoClient(new Server('localhost', 27017));
-	if (db) {
-		return db;
-	} else {
-		return false;
-	}
+		db.connect("mongodb://james:temboparty@localhost:27017/pingpong", function(err, db) {
+			if (db) {
+				return db;
+			} else {
+				return false;
+			}
+		}
 }
 
 /**

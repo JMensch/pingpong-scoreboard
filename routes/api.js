@@ -95,8 +95,7 @@ exports.login = function(req, res) {
 	var password = req.body.password;
 	// var group_id = ObjectId("52f55ae49d287e03cb213de2");
   	mongo.open(function (err, mongo) {
-	  	var db = mongo.db("pingpong");
-	  	db.collection('data', function (err, collection) {
+	  	mongo.collection('data', function (err, collection) {
 	  		collection.findOne({ 'username':username, 'password':password }, 
 	  			function (err, result) {
 	  				if (err) {
