@@ -10,7 +10,6 @@ var express = require('express'),
     path = require('path');
 
 var app = express();
-	  mongo.testDB();
 // all environments
 app.use(express.favicon(__dirname + '/public/images/favicon.png')); 
 app.set('port', process.env.PORT || 3000);

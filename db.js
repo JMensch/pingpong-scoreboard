@@ -1,6 +1,6 @@
 /**
 * Database connection file
-* @since 1/18/14
+* @since 2/20/14
 * @author james@jamesmensch.com
 **/
 var MongoClient = require('mongodb').MongoClient,
@@ -10,14 +10,7 @@ var MongoClient = require('mongodb').MongoClient,
 * Connects to database
 **/
 exports.dbConnect = function() {
-	var db = new MongoClient(new Server('localhost', 27017));
-		db.connect("mongodb://james:temboparty@localhost:27017/pingpong", function(err, db) {
-			if (db) {
-				return db;
-			} else {
-				return false;
-			}
-		}
+	return MongoClient;
 }
 
 /**
