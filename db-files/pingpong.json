@@ -1,0 +1,10 @@
+{ "_id" : { "$oid" : "52f2865196aea74f5a6ee2c7" }, "group_id" : { "$oid" : "52f55ae49d287e03cb213de2" }, "username" : "James", "password" : "James", "total_wins" : 0, "total_losses" : 0, "elo" : 1000 }
+{ "_id" : { "$oid" : "52f2866496aea74f5a6ee2c8" }, "group_id" : { "$oid" : "52f55ae49d287e03cb213de2" }, "username" : "Mike", "password" : "Mike", "total_wins" : 0, "total_losses" : 0, "elo" : 1000 }
+{ "_id" : { "$oid" : "52f286cb96aea74f5a6ee2c9" }, "group_id" : { "$oid" : "52f55ae49d287e03cb213de2" }, "username" : "Jon", "password" : "Jon", "total_wins" : 0, "total_losses" : 0, "elo" : 1000 }
+{ "_id" : { "$oid" : "52f286dd96aea74f5a6ee2ca" }, "group_id" : { "$oid" : "52f55ae49d287e03cb213de2" }, "username" : "Meg", "password" : "Meg", "total_wins" : 0, "total_losses" : 0, "elo" : 1000 }
+{ "_id" : { "$oid" : "52f286f296aea74f5a6ee2cb" }, "group_id" : { "$oid" : "52f55ae49d287e03cb213de2" }, "username" : "Christine", "password" : "Christine", "total_wins" : 0, "total_losses" : 0, "elo" : 1000 }
+{ "_id" : { "$oid" : "52f2870e96aea74f5a6ee2cc" }, "group_id" : { "$oid" : "52f55ae49d287e03cb213de2" }, "username" : "Eric", "password" : "Eric", "total_wins" : 0, "total_losses" : 0, "elo" : 1000 }
+{ "_id" : { "$oid" : "52f2871d96aea74f5a6ee2cd" }, "group_id" : { "$oid" : "52f55ae49d287e03cb213de2" }, "username" : "Steve", "password" : "Steve", "total_wins" : 0, "total_losses" : 0, "elo" : 1000 }
+{ "_id" : { "$oid" : "52f2872996aea74f5a6ee2ce" }, "group_id" : { "$oid" : "52f55ae49d287e03cb213de2" }, "username" : "David", "password" : "David", "total_wins" : 0, "total_losses" : 0, "elo" : 1000 }
+{ "_id" : { "$oid" : "52f2873a96aea74f5a6ee2cf" }, "group_id" : { "$oid" : "52f55ae49d287e03cb213de2" }, "username" : "Tim", "password" : "Tim", "total_wins" : 0, "total_losses" : 0, "elo" : 1000 }
+{ "_id" : { "$oid" : "52f2875496aea74f5a6ee2d0" }, "group_id" : { "$oid" : "52f55ae49d287e03cb213de2" }, "username" : "Sam", "password" : "Sam", "total_wins" : 0, "total_losses" : 0, "elo" : 1000 }
