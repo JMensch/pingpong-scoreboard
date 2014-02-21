@@ -51,9 +51,9 @@ http.createServer(app).listen(app.get('port'), function(){
 var mongoclient = mongo.dbConnect();
     var db = mongoclient.db("pingpong");
     db.open(function (err, db) {
-        assert.equal(null, err);
-        db.auth("james", "temboparty", function (err, result) {
-            assert.equal(true, result);
-            db.close();
-        });
+        if (!err) {
+            db.auth("james", "temboparty", function (err, result) {
+                db.close();
+            });
+        }
     })
