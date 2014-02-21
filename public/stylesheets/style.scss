@@ -1,5 +1,36 @@
-$tembo-orange: #F05924;
+$tembo-orange: #F77F00;
 .hidden { display: none !important; }
+.full-row { width: 100% !important; }
+/*=============================
+=            FONTS            =
+=============================*/
+$fonts: "nexa-light", "nexa-heavy", "nexa-slab-light";
+@each $font-face in $fonts {
+	@font-face {
+		font-family: $font-face; font-style: normal; font-weight: normal;
+          src: url('/path/to/font/#{$font-face}.eot'),
+               url('/path/to/font/#{$font-face}.otf')  format('otf');
+	}
+}
+@mixin font($font, $style: normal, $weight: normal) {
+		font-family: $font, Verdana, sans-serif;
+		font-style: $style;
+		font-weight: $weight;
+	}
+
+.main-nav a, .singles, .sub-nav ul li:not(.display-name) {
+	@include font("nexa-light");
+}
+.display-name {
+	@include font("nexa-heavy");
+}
+.sub-nav span:not(.display-name), th {
+	@include font("nexa-slab-light");
+}
+.login h4 { 
+	@include font("nexa-light");
+}
+
 /*============================
 =            NAVIGATION      =
 ============================*/
@@ -26,7 +57,7 @@ nav.main-nav {
 				padding: 0 15px;
 				display: inline-block;
 				height: 50px;
-				line-height: 50px;
+				line-height: 52px;
 				color: #fff;
 				opacity: 0.8;
 				text-decoration: none;
@@ -43,55 +74,38 @@ nav.main-nav {
 		}
 	}
 }
-nav.sub-nav {
+.sub-nav {
 	overflow:visible;
 	margin: 0;
 	padding:0;
-	background: #f8f8f8;
-	border-bottom: 1px solid #dadada;
 	width: 100%;
-	height: 40px;
+	height: 4em;
+
 	ul {
-		float:left;
 		list-style: none;
 		text-align: center;
 		margin: 0;
+		line-height: 4em;
+		width: 100%;
 		li {
 			margin: 0;
-			float:left;
+			float:right;
 			position:relative;
-			a {
-				line-height:40px;
-				color: #888;
-				padding: 0 15px;
-				display: inline-block;
-				height: 40px;
-				text-decoration: none;
+			line-height: 2em;
+			text-align:center;
+			font-size:1em;
+			color: #fff;
+			&:not(.display-name) .header{
+				color: $tembo-orange;
+				float:left;
+				width:100%;
+				line-height:1em;
+				padding-top:1em;
+			}
+			&.display-name {
+				float:left;
 				font-weight: bold;
-				&.active {
-					color: #000;
-					&:after, &:before {
-						content:"";
-						position: absolute;
-						bottom:0;
-						height:0;
-						width:0;
-						left: 50%;
-						margin: 0 0 -1px -8px;
-						border-left: 8px solid transparent;
-						border-right: 8px solid transparent;
-					}
-					&:after {
-						border-bottom: 10px solid #fff;
-					}
-					&:before {
-						border-bottom: 10px solid #dadada;
-						margin: 0 0 0px -8px;
-					}
-				}
-				&:hover {
-					color: #555;
-				}
+				font-size: 2em;
 			}
 		}
 	}
@@ -99,86 +113,98 @@ nav.sub-nav {
 /*================================
 =            SINGLES PARTIAL            =
 ================================*/
+.background-image {
+	background: linear-gradient(rgba(23, 22, 23, 0.6), rgba(23, 22, 23, 0.6)), url("../img/tembo-background.jpg") no-repeat center center fixed;
+	-webkit-background-size: cover;
+  	-moz-background-size: cover;
+  	-o-background-size: cover;
+  	background-size: cover;
+  	height: 100vh;
+}
 .singles {
-	.rank {
-		padding: 10px;
-		text-align: center;
-		small {
-			font-size:18px;
-			color:#555;
-			&:first-of-type {
-				float:left;
-			}
-			&:nth-of-type(2) {
-				font-size: 14px;
-				color: #555;
-				span {
-					font-size:24px;
-					color:$tembo-orange;
-				}
-			}
+	.timespan-select {
+		padding: 0;
+		margin: 0.5em 0 1.5em 0;
+		ul {
+			list-style: none;
+			text-align:left;
+			margin: 0;
 		}
-		.your-rank {
-			font-size:8em;
-			color: $tembo-orange;
-		}
-	}
-	.scoreboard {
-		.chart {
-			table {
-				width:100%;
-				text-align:center;
-				border:none;
-				color:#888;
-				border-bottom: 1px solid #ababab;
-				thead {
-					td {
-						text-align:center;
-						color:#555;
-					}
-				}
-				tbody {
-					td {
-						color:#888;
-					}
-					tr:nth-child(even) {
-						background-color: rgba(240,89,36, 0.1);
-					}
-				}
+		li {
+			&:first-child {
+				margin-left: 0;
 			}
-		}
-		div:not(.chart) {
-			text-align:center;
-			width:49%;
-			margin:0;
-			padding:0;
+			margin: 0 1em;
+			padding: 0 0.5em;
+			font-size: 1em;
 			display: inline-block;
-			h4 {
-				font-weight: bold;
-				font-size:18px;
-				color:#555;
+			a {
+				width:100%;
+				color: #ebebeb;
 			}
-			p {
-				color:#888;
+			&.active {
+				border-bottom: 1px solid $tembo-orange;
+				& a {color: $tembo-orange; }
 			}
-		}
-		.win-percentage {
-			border-right: 1px solid #ababab;
 		}
 	}
-	.pie-chart-wrapper {
-		height:240px;
-		// width: 240px;
-		div {
+	.stats-container { padding-left: 0; }
+	.series-stats, .game-stats, .records, .sidebar-container {
+		padding: 0;
+		table {
+			color: #fff;
+			background: transparent;
+			border: none;
+			border-top: 1px solid #fff;
 			width: 100%;
-			height: 100%;
+			// text-align:center;
+			td, th {
+				color: #fff;
+				padding-left: 0;
+				font-weight: normal;
+				font-size:1em;
+			}
+			td:not(:first-child) {
+				text-align:center;
+			}
+			th { 
+				color: $tembo-orange; text-align: center; 
+				&.border-bottom {
+					border-bottom: 1px solid #fff;
+					padding-bottom: 5px;
+				}
+			}
+			caption {
+				text-align:left;
+				font-size: 110%;
+			}
+			tr {
+				background: transparent;
+				&:first-child td{
+					padding-top: 0;
+				}
+			}
+			thead {
+				background: transparent;
+			}
+			tbody {
+			}
 		}
 	}
-	.sparkline-wrapper {
-		margin-top: 50px;
-		height: 200px;
-		div {
-			height: 100%;
+	.records {
+		th:not(.border-bottom) {
+			padding-top:0;
+		}
+	}
+	.sidebar-container {
+		padding: 1em;
+		border: 1px solid #fff;
+		border-right: none;
+		table:last-child {
+			margin-bottom: 0;
+		}
+		table th {
+			width: 33%;
 		}
 	}
 }
@@ -198,8 +224,9 @@ nav.sub-nav {
 		}
 	}
 	.settings-container {
+		width:12%;
 		margin: 0.5em;
-		margin-top: 15%;
+		margin-top: 10%;
 		.current-series {
 			width:100%;
 			table {
@@ -241,6 +268,7 @@ nav.sub-nav {
 			margin-top: 0.5em;
 			overflow:auto;
 			& a {
+				font-size:1em;
 				width:100%;
 				background: #555;
 				&:active {
@@ -252,7 +280,7 @@ nav.sub-nav {
 				margin: 0;
 			}
 			li {
-				width: 50%;
+				width: 100%;
 			}
 		}
 		.series-switch-container {
@@ -290,7 +318,23 @@ nav.sub-nav {
 			text-align:center;
 		}
 		.button-container {
+			min-height: 165px;
+			position:relative;
 			text-align: center;
+			.prev {
+				position:absolute;
+				top:40%;
+				left:0;
+				color: #555;
+				cursor: pointer;
+			}
+			.next {
+				position:absolute;
+				top:40%;
+				right:0;
+				color: #555;
+				cursor: pointer;
+			}
 			.player-select-button {
 				margin: 1em 0.5em;
 				background: #555;
@@ -352,6 +396,7 @@ nav.sub-nav {
 	margin-top: 5em;
 	h4 {
 		text-align:center;
+		color: #fff;
 	}
 	button {
 		float:right;

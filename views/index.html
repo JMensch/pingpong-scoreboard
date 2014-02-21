@@ -1,13 +1,14 @@
-<!-- index.html -->
+ <!-- index.html -->
 	<!DOCTYPE html>
 	<html lang="en" ng-app="myApp">
 	<head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>Tembo PingPong</title>
+        <title>TemboPong</title>
         <meta name="description" content="">
          <!-- Mobile Specific Metas -->
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
         <!--[if lte IE 8]>
         <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
         <![endif]-->
@@ -23,38 +24,33 @@
 			<nav class="main-nav">
 				<div class="row">
 					<div class="small-12 columns">
-						<a href="#"><img src="img/Tembo_Pong.png"/></a>
+						<a href="#"><img src="img/tembo-logo-white.png"/></a>
 						<ul class="">
-							<li><a href="#">Logout</a></li>
+							<li ng-show="location.path() == '/singles'"><a ng-click="logout()"href="#">Logout</a></li>
 							<li><a href="#" data-reveal-id="help-modal">Help</a></li>
-							<li><a href="#" data-reveal-id="add-game-modal">Add Game</a></li>
+							<li ng-show="location.path() == '/singles'"><a href="#" data-reveal-id="add-game-modal">Add Game</a></li>
 							<li ng-class="{hidden:error_banner}">{{error_banner}}</li>
 						</ul>
 					</div>
 				</div>
 			</nav>
-			<nav class="sub-nav">
-				<div class="row">
-					<div class="small-12 columns">
-						<ul>
-							<li><a ng-class="{active:isActive('/singles')}" href="singles">Singles</a></li>
-							<li><a ng-class="{active:isActive('/doubles')}" href="doubles">Doubles</a></li>
-						</ul>
-					</div>
-				</div>
-			</nav>
 		</header>
-		<div ng-view class="row"></div>
-
+		<div class="full-row background-image">
+			<div ng-view class="row"></div>
+		</div>
 		<!-- Add Games Modal -->
 		<div ng-controller="modalCtrl" id="add-game-modal" class="reveal-modal add-game-modal" data-reveal> 
 			<div class="players-select left small-4 columns">
-				<h4>Select team one players</h4>
+				<h4>Team one</h4>
 				<div class="button-container">
-					<a ng-repeat="player in players_for_buttons_left | limitTo: 9" ng-click="select('left', player)" ng-class="itemClass('left', player)" class="tiny button radius player-select-button" data-id="{{player.id}}">{{player.name}}</a>
+					<a ng-click="page('left', 'prev')" href="#" class="prev"><i class="fa fa-angle-left fa-3x"></i></a>
+
+					<a ng-repeat="player in players_for_buttons_left | startFrom: currPage*pageSize | limitTo: pageSize" ng-click="select('left', player)" ng-class="itemClass('left', player)" class="tiny button radius player-select-button" data-id="{{player.id}}">{{player.name}}</a>
+					
+					<a ng-click="page('left', 'next')" href="#" class="next"><i class="fa fa-angle-right fa-3x"></i></a>
 				</div>
 				<div class="score">
-					<h4>Team one score</h4>
+					<h4>Score</h4>
 					<div class="score-container">
 						<span>{{slider_left}}</span>
 						<div class="clearfix"></div>
@@ -64,41 +60,44 @@
 			</div>
 			<div class="settings-container left">
 				<div class="series-switch-container switch round">
-					<input id="x" name="game-type-switch" type="radio">
- 					<label for="x" onclick="">11</label>
+					<input id="x" ng-model="curr_game_type" value=11 name="game-type-switch" type="radio">
+ 					<label for="x">11</label>
 
-					<input id="x1" name="game-type-switch" type="radio" checked>
-					<label for="x1" onclick="">21</label>
+					<input id="x1" ng-model="curr_game_type" value=21 name="game-type-switch" type="radio" checked>
+					<label for="x1">21</label>
 					<span></span>
 				</div>
 				<div class="series-scores-container">
 					<ul class="button-group radius">
-						<li><a ng-click="addGame()" href="#" class="tiny button"><i class="fa fa-lg fa-plus"></i></a></li>
-						<li><a ng-click="removeGame()" href="#" class="tiny button"><i class="fa fa-lg fa-minus"></i></a></li>
+						<li><a ng-click="addGame()" href="#" class="tiny button"><i class="fa fa-plus"></i> Game</a></li>
 					</ul>
 				</div>
 				<div class="current-series">
 					<table>
 						<thead>
-							<th class="team-left">James</th>
-							<th class="team-right">Mike</th>
+							<th class="team-left">{{team_header_left}}</th>
+							<th class="team-right">{{team_header_right}}</th>
 						</thead>
 						<tbody>
-							<tr ng-repeat="score_left in scores[0] track by $index">
-							<td ng-class="scores[0][$index] > scores[1][$index] ? 'active' : ''" >{{score_left}}</td>
-							<td ng-class="scores[0][$index] < scores[1][$index] ? 'active' : ''" >{{scores[1][$index]}}</td>
+							<tr ng-repeat="score in scores track by $index">
+								<td ng-class="score.t1_score > score.t2_score ? 'active' : ''" >{{score.t1_score}}</td>
+								<td ng-class="score.t1_score < score.t2_score ? 'active' : ''" >{{score.t2_score}}</td>
 							</tr>
 						</tbody>
 					</table>
 				</div>	
 			</div>
 			<div class="players-select right small-4 columns">
-				<h4>Select team two players</h4>
+				<h4>Team two</h4>
 				<div class="button-container">
-					<a ng-repeat="player in players_for_buttons_right | limitTo: 9" ng-click="select('right', player)" ng-class="itemClass('right', player)" class="tiny button radius player-select-button" data-id="{{player.id}}">{{player.name}}</a>
+					<a ng-click="page('right', 'prev')" href="#" class="prev"><i class="fa fa-angle-left fa-3x"></i></a>
+					
+					<a ng-repeat="player in players_for_buttons_right | startFrom: currPage_right*pageSize | limitTo: pageSize" ng-click="select('right', player)" ng-class="itemClass('right', player)" class="tiny button radius player-select-button" data-id="{{player.id}}">{{player.name}}</a>
+					
+					<a ng-click="page('right', 'next')" href="#" class="next"><i class="fa fa-angle-right fa-3x"></i></a>
 				</div>
 				<div class="score">
-					<h4>Team two score</h4>
+					<h4>Score</h4>
 					<div class="score-container">
 						<span>{{slider_right}}</span>
 						<div class="clearfix"></div>
@@ -109,7 +108,7 @@
 			<div class="clearfix"></div>
 			
 			<div class="players-submit">
-				<span><a href="#" class="button player-submit-button">Submit Series</a> or <a ng-click="resetModal()" href="#" class="player-cancel-button">reset</a></span>
+				<span><a href="#" ng-click="submitGame()" class="button player-submit-button">Submit Series</a> <br/>or <a ng-click="resetModal()" href="#" class="player-cancel-button">reset</a></span>
 			</div>
 			<a class="close-reveal-modal">&#215;</a>
 		</div>

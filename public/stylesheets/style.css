@@ -1,13 +1,57 @@
 .hidden {
   display: none !important; }
 
+.full-row {
+  width: 100% !important; }
+
+/*=============================
+=            FONTS            =
+=============================*/
+@font-face {
+  font-family: "nexa-light";
+  font-style: normal;
+  font-weight: normal;
+  src: url("/path/to/font/nexa-light.eot"), url("/path/to/font/nexa-light.otf") format("otf"); }
+
+@font-face {
+  font-family: "nexa-heavy";
+  font-style: normal;
+  font-weight: normal;
+  src: url("/path/to/font/nexa-heavy.eot"), url("/path/to/font/nexa-heavy.otf") format("otf"); }
+
+@font-face {
+  font-family: "nexa-slab-light";
+  font-style: normal;
+  font-weight: normal;
+  src: url("/path/to/font/nexa-slab-light.eot"), url("/path/to/font/nexa-slab-light.otf") format("otf"); }
+
+.main-nav a, .singles, .sub-nav ul li:not(.display-name) {
+  font-family: "nexa-light", Verdana, sans-serif;
+  font-style: normal;
+  font-weight: normal; }
+
+.display-name {
+  font-family: "nexa-heavy", Verdana, sans-serif;
+  font-style: normal;
+  font-weight: normal; }
+
+.sub-nav span:not(.display-name), th {
+  font-family: "nexa-slab-light", Verdana, sans-serif;
+  font-style: normal;
+  font-weight: normal; }
+
+.login h4 {
+  font-family: "nexa-light", Verdana, sans-serif;
+  font-style: normal;
+  font-weight: normal; }
+
 /*============================
 =            NAVIGATION      =
 ============================*/
 nav.main-nav {
   width: 100%;
   height: 50px;
-  background: -webkit-linear-gradient(top, #f26b3c, #f05924);
+  background: -webkit-linear-gradient(top, #f26b3c, #f77f00);
   box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2); }
   nav.main-nav img {
     float: left;
@@ -26,7 +70,7 @@ nav.main-nav {
         padding: 0 15px;
         display: inline-block;
         height: 50px;
-        line-height: 50px;
+        line-height: 52px;
         color: #fff;
         opacity: 0.8;
         text-decoration: none; }
@@ -38,108 +82,111 @@ nav.main-nav {
           box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.3);
           background: #D3410E; }
 
-nav.sub-nav {
+.sub-nav {
   overflow: visible;
   margin: 0;
   padding: 0;
-  background: #f8f8f8;
-  border-bottom: 1px solid #dadada;
   width: 100%;
-  height: 40px; }
-  nav.sub-nav ul {
-    float: left;
+  height: 4em; }
+  .sub-nav ul {
     list-style: none;
     text-align: center;
-    margin: 0; }
-    nav.sub-nav ul li {
+    margin: 0;
+    line-height: 4em;
+    width: 100%; }
+    .sub-nav ul li {
       margin: 0;
-      float: left;
-      position: relative; }
-      nav.sub-nav ul li a {
-        line-height: 40px;
-        color: #888;
-        padding: 0 15px;
-        display: inline-block;
-        height: 40px;
-        text-decoration: none;
-        font-weight: bold; }
-        nav.sub-nav ul li a.active {
-          color: #000; }
-          nav.sub-nav ul li a.active:after, nav.sub-nav ul li a.active:before {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            height: 0;
-            width: 0;
-            left: 50%;
-            margin: 0 0 -1px -8px;
-            border-left: 8px solid transparent;
-            border-right: 8px solid transparent; }
-          nav.sub-nav ul li a.active:after {
-            border-bottom: 10px solid #fff; }
-          nav.sub-nav ul li a.active:before {
-            border-bottom: 10px solid #dadada;
-            margin: 0 0 0px -8px; }
-        nav.sub-nav ul li a:hover {
-          color: #555; }
+      float: right;
+      position: relative;
+      line-height: 2em;
+      text-align: center;
+      font-size: 1em;
+      color: #fff; }
+      .sub-nav ul li:not(.display-name) .header {
+        color: #f77f00;
+        float: left;
+        width: 100%;
+        line-height: 1em;
+        padding-top: 1em; }
+      .sub-nav ul li.display-name {
+        float: left;
+        font-weight: bold;
+        font-size: 2em; }
 
 /*================================
 =            SINGLES PARTIAL            =
 ================================*/
-.singles .rank {
-  padding: 10px;
-  text-align: center; }
-  .singles .rank small {
-    font-size: 18px;
-    color: #555; }
-    .singles .rank small:first-of-type {
-      float: left; }
-    .singles .rank small:nth-of-type(2) {
-      font-size: 14px;
-      color: #555; }
-      .singles .rank small:nth-of-type(2) span {
-        font-size: 24px;
-        color: #f05924; }
-  .singles .rank .your-rank {
-    font-size: 8em;
-    color: #f05924; }
-.singles .scoreboard .chart table {
-  width: 100%;
-  text-align: center;
-  border: none;
-  color: #888;
-  border-bottom: 1px solid #ababab; }
-  .singles .scoreboard .chart table thead td {
-    text-align: center;
-    color: #555; }
-  .singles .scoreboard .chart table tbody td {
-    color: #888; }
-  .singles .scoreboard .chart table tbody tr:nth-child(even) {
-    background-color: rgba(240, 89, 36, 0.1); }
-.singles .scoreboard div:not(.chart) {
-  text-align: center;
-  width: 49%;
-  margin: 0;
+.background-image {
+  background: linear-gradient(rgba(23, 22, 23, 0.6), rgba(23, 22, 23, 0.6)), url("../img/tembo-background.jpg") no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  height: 100vh; }
+
+.singles .timespan-select {
   padding: 0;
-  display: inline-block; }
-  .singles .scoreboard div:not(.chart) h4 {
-    font-weight: bold;
-    font-size: 18px;
-    color: #555; }
-  .singles .scoreboard div:not(.chart) p {
-    color: #888; }
-.singles .scoreboard .win-percentage {
-  border-right: 1px solid #ababab; }
-.singles .pie-chart-wrapper {
-  height: 240px; }
-  .singles .pie-chart-wrapper div {
-    width: 100%;
-    height: 100%; }
-.singles .sparkline-wrapper {
-  margin-top: 50px;
-  height: 200px; }
-  .singles .sparkline-wrapper div {
-    height: 100%; }
+  margin: 0.5em 0 1.5em 0; }
+  .singles .timespan-select ul {
+    list-style: none;
+    text-align: left;
+    margin: 0; }
+  .singles .timespan-select li {
+    margin: 0 1em;
+    padding: 0 0.5em;
+    font-size: 1em;
+    display: inline-block; }
+    .singles .timespan-select li:first-child {
+      margin-left: 0; }
+    .singles .timespan-select li a {
+      width: 100%;
+      color: #ebebeb; }
+    .singles .timespan-select li.active {
+      border-bottom: 1px solid #f77f00; }
+      .singles .timespan-select li.active a {
+        color: #f77f00; }
+.singles .stats-container {
+  padding-left: 0; }
+.singles .series-stats, .singles .game-stats, .singles .records, .singles .sidebar-container {
+  padding: 0; }
+  .singles .series-stats table, .singles .game-stats table, .singles .records table, .singles .sidebar-container table {
+    color: #fff;
+    background: transparent;
+    border: none;
+    border-top: 1px solid #fff;
+    width: 100%; }
+    .singles .series-stats table td, .singles .series-stats table th, .singles .game-stats table td, .singles .game-stats table th, .singles .records table td, .singles .records table th, .singles .sidebar-container table td, .singles .sidebar-container table th {
+      color: #fff;
+      padding-left: 0;
+      font-weight: normal;
+      font-size: 1em; }
+    .singles .series-stats table td:not(:first-child), .singles .game-stats table td:not(:first-child), .singles .records table td:not(:first-child), .singles .sidebar-container table td:not(:first-child) {
+      text-align: center; }
+    .singles .series-stats table th, .singles .game-stats table th, .singles .records table th, .singles .sidebar-container table th {
+      color: #f77f00;
+      text-align: center; }
+      .singles .series-stats table th.border-bottom, .singles .game-stats table th.border-bottom, .singles .records table th.border-bottom, .singles .sidebar-container table th.border-bottom {
+        border-bottom: 1px solid #fff;
+        padding-bottom: 5px; }
+    .singles .series-stats table caption, .singles .game-stats table caption, .singles .records table caption, .singles .sidebar-container table caption {
+      text-align: left;
+      font-size: 110%; }
+    .singles .series-stats table tr, .singles .game-stats table tr, .singles .records table tr, .singles .sidebar-container table tr {
+      background: transparent; }
+      .singles .series-stats table tr:first-child td, .singles .game-stats table tr:first-child td, .singles .records table tr:first-child td, .singles .sidebar-container table tr:first-child td {
+        padding-top: 0; }
+    .singles .series-stats table thead, .singles .game-stats table thead, .singles .records table thead, .singles .sidebar-container table thead {
+      background: transparent; }
+.singles .records th:not(.border-bottom) {
+  padding-top: 0; }
+.singles .sidebar-container {
+  padding: 1em;
+  border: 1px solid #fff;
+  border-right: none; }
+  .singles .sidebar-container table:last-child {
+    margin-bottom: 0; }
+  .singles .sidebar-container table th {
+    width: 33%; }
 
 /*======================================
 =            ADD GAME MODAL            =
@@ -154,8 +201,9 @@ nav.sub-nav {
     .add-game-modal .close-reveal-modal:hover {
       color: #555; }
   .add-game-modal .settings-container {
+    width: 12%;
     margin: 0.5em;
-    margin-top: 15%; }
+    margin-top: 10%; }
     .add-game-modal .settings-container .current-series {
       width: 100%; }
       .add-game-modal .settings-container .current-series table {
@@ -181,20 +229,21 @@ nav.sub-nav {
             font-weight: bold; }
           .add-game-modal .settings-container .current-series table td.active {
             font-weight: bold;
-            color: #f05924; }
+            color: #f77f00; }
     .add-game-modal .settings-container .series-scores-container {
       margin-top: 0.5em;
       overflow: auto; }
       .add-game-modal .settings-container .series-scores-container a {
+        font-size: 1em;
         width: 100%;
         background: #555; }
         .add-game-modal .settings-container .series-scores-container a:active {
-          color: #f05924; }
+          color: #f77f00; }
       .add-game-modal .settings-container .series-scores-container ul {
         list-style: none;
         margin: 0; }
       .add-game-modal .settings-container .series-scores-container li {
-        width: 50%; }
+        width: 100%; }
     .add-game-modal .settings-container .series-switch-container {
       overflow: hidden;
       /**
@@ -209,7 +258,7 @@ nav.sub-nav {
         margin: 0;
         background: #555; }
         .add-game-modal .settings-container .series-switch-container a.active {
-          background: #f05924; }
+          background: #f77f00; }
       .add-game-modal .settings-container .series-switch-container li {
         width: 50%; }
   .add-game-modal .players-select {
@@ -222,13 +271,27 @@ nav.sub-nav {
     .add-game-modal .players-select h4 {
       text-align: center; }
     .add-game-modal .players-select .button-container {
+      min-height: 165px;
+      position: relative;
       text-align: center; }
+      .add-game-modal .players-select .button-container .prev {
+        position: absolute;
+        top: 40%;
+        left: 0;
+        color: #555;
+        cursor: pointer; }
+      .add-game-modal .players-select .button-container .next {
+        position: absolute;
+        top: 40%;
+        right: 0;
+        color: #555;
+        cursor: pointer; }
       .add-game-modal .players-select .button-container .player-select-button {
         margin: 1em 0.5em;
         background: #555;
         width: 25%; }
         .add-game-modal .players-select .button-container .player-select-button.active {
-          background: #f05924; }
+          background: #f77f00; }
     .add-game-modal .players-select .score .score-container {
       margin: 1em 2em;
       margin-top: 0;
@@ -239,8 +302,8 @@ nav.sub-nav {
         background: #555;
         margin-top: 1em; }
       .add-game-modal .players-select .score .score-container .ui-slider-handle {
-        background: #f05924;
-        border: #f05924;
+        background: #f77f00;
+        border: #f77f00;
         cursor: move; }
   .add-game-modal .players-submit {
     margin: 0.5em auto;
@@ -249,7 +312,7 @@ nav.sub-nav {
     text-align: center; }
     .add-game-modal .players-submit .player-submit-button {
       border-radius: 8px;
-      background: #f05924; }
+      background: #f77f00; }
       .add-game-modal .players-submit .player-submit-button:hover {
         opacity: 0.9; }
     .add-game-modal .players-submit .player-cancel-button {
@@ -262,9 +325,10 @@ nav.sub-nav {
 .login {
   margin-top: 5em; }
   .login h4 {
-    text-align: center; }
+    text-align: center;
+    color: #fff; }
   .login button {
     float: right;
-    background: #f05924; }
+    background: #f77f00; }
     .login button:hover {
       opacity: 0.9; }

@@ -10,8 +10,9 @@ var express = require('express'),
     path = require('path');
 
 var app = express();
-	mongo.testDB();
+	  mongo.testDB();
 // all environments
+app.use(express.favicon(__dirname + '/public/images/favicon.png')); 
 app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/views');
 app.engine('html', require('ejs').renderFile);
@@ -20,17 +21,6 @@ app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(app.router);
-
-// development only
-if ('development' == app.get('env')) {
-  app.use(express.errorHandler());
-  app.use(express.favicon());
-}
-
-// production only
-if (app.get('env') === 'production') {
-  // TODO
-};
 
 /**
 * App Routing
@@ -43,6 +33,8 @@ app.get('/partials/:type', routes.partials);
 **/
 app.post('/api/login', api.login);
 app.post('/api/user_info', api.user_info);
+app.post('/api/submitGame', api.submitGame);
+app.post('/api/insertCSV', api.insertCSV);
 
 /**
 * Catch-all

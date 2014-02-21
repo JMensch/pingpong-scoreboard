@@ -1,48 +1,191 @@
 <section class="singles small-12 columns">
-	<div class="small-3 columns rank">
-		<small>You rank</small><div class="clearfix"></div>
-		<span ng-show="rank" class="your-rank">{{rank}}</span>
-		<span ng-show="!rank" class="your-rank" style="font-size:">N/A</span>
-		<small>out of <span>{{total_players}}</span></small>
+	<div class="sub-nav small-12 columns">
+		<ul>
+			<li class="display-name"><span>{{display_name || "Error"}}</span></li>
+			<li><span class="header">win rate</span><strong>{{win_rate}}%</strong></li>
+			<li><span class="header">record</span><strong>{{total_wins}} - {{total_losses}}</strong></li>
+			<li><span class="header">last played</span>{{last_played}}</li>
+			<li><span class="header">elo</span>{{elo}}</li>
+		</ul>
 	</div>
-	<div class="small-6 columns scoreboard">
-		<div class="chart">
-			<table ng-show="chart.length">
+	<div class="timespan-select small-12 columns">
+		<ul>
+			<li class="active"><a href="#">ALL TIME</a></li>
+			<li><a href="#">THIS MONTH</a></li>
+			<li><a href="#">THIS YEAR</a></li>
+		</ul>
+	</div>
+	<div class="stats-container small-8 columns">
+		<div class="series-stats">
+			<table>
+				<caption>Series Stats</caption>
 				<thead>
 					<tr>
-						<td>rank</td>
-						<td>opponent</td>
-						<td>all time</td>
-						<td>win % against</td>
+						<th></th>
+						<th>played</th>
+						<th>win rate</th>
+						<th>streak</th>
+						<th>+/-</th>
 					</tr>
 				</thead>
 				<tbody>
-					<tr ng-repeat="player in chart">
-						<td>{{player.rank}}</td>
-						<td>{{player.username}}</td>
-						<td>{{player.total_wins}} - {{player.total_losses}}</td>
-						<td>{{player.win_pct || 'N/A'}}</td>
+					<tr>
+						<td>Singles</td>
+						<td>{{stats.series.singles.games_played || 0}}</td>
+						<td>{{stats.series.singles.win_rate || 0}}%</td>
+						<td>{{stats.series.singles.streak || 0}}</td>
+						<td>{{stats.series.singles.plus_minus || 0}}</td>
+					</tr>
+					<tr>
+						<td>Doubles</td>
+						<td>{{stats.series.doubles.games_played || 0}}</td>
+						<td>{{stats.series.doubles.win_rate || 0}}%</td>
+						<td>{{stats.series.doubles.streak || 0}}</td>
+						<td>{{stats.series.doubles.plus_minus || 0}}</td>
+					</tr>
+					<tr>
+						<td>Overall</td>
+						<td>{{stats.series.overall.games_played || 0}}</td>
+						<td>{{stats.series.overall.win_rate || 0}}%</td>
+						<td>{{stats.series.overall.streak || 0}}</td>
+						<td>{{stats.series.overall.plus_minus || 0}}</td>					
 					</tr>
 				</tbody>
 			</table>
-			<div style="width: 100%" ng-show="!chart.length">
-				<p>There is no game data relative to your account that can be displayed. Play some more games!</p>
-			</div>
 		</div>
-		<div class="win-percentage">
-			<h4>Win Percentage</h4>
-			<p>{{total_win_pct || 'no games recorded!'}}</p>
+		<div class="game-stats">
+			<table>
+				<caption>Game Stats</caption>
+				<thead>
+					<tr>
+						<th></th>
+						<th>played</th>
+						<th>win rate</th>
+						<th>streak</th>
+						<th>+/-</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Singles</td>
+						<td>{{stats.games.singles.games_played || 0}}</td>
+						<td>{{stats.games.singles.win_rate || 0}}%</td>
+						<td>{{stats.games.singles.streak || 0}}</td>
+						<td>{{stats.games.singles.plus_minus || 0}}</td>
+					</tr>
+					<tr>
+						<td>Doubles</td>
+						<td>{{stats.games.doubles.games_played || 0}}</td>
+						<td>{{stats.games.doubles.win_rate || 0}}%</td>
+						<td>{{stats.games.doubles.streak || 0}}</td>
+						<td>{{stats.games.doubles.plus_minus || 0}}</td>
+					</tr>
+					<tr>
+						<td>Overall</td>
+						<td>{{stats.games.overall.games_played || 0}}</td>
+						<td>{{stats.games.overall.win_rate || 0}}%</td>
+						<td>{{stats.games.overall.streak || 0}}</td>
+						<td>{{stats.games.overall.plus_minus || 0}}</td>					
+					</tr>
+				</tbody>
+			</table>
 		</div>
-		<div>
-			<h4>Something Else</h4>
-			<p>112</p>
+		<div class="records">
+			<table>
+				<caption>Records</caption>
+				<thead>
+					<tr>
+						<th></th>
+						<th colspan="2" class="border-bottom">longest win streak</th>
+						<!-- <th></th> -->
+						<th></th>
+						<th></th>
+					</tr>
+					<tr>
+						<th></th>
+						<th>series</th>
+						<th>games</th>
+						<th>total<br>days played</th>
+						<th>avg games<br>per opponent</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Singles</td>
+						<td>{{stats.records.singles.longest_streak_series || 0}}</td>
+						<td>{{stats.records.singles.longest_streak_games || 0}}</td>
+						<td>{{stats.records.singles.total_days_played || 0}}</td>
+						<td>{{stats.records.singles.games_per_opponent || 0}}</td>
+					</tr>
+					<tr>
+						<td>Doubles</td>
+						<td>{{stats.records.doubles.longest_streak_series || 0}}</td>
+						<td>{{stats.records.doubles.longest_streak_games || 0}}</td>
+						<td>{{stats.records.doubles.total_days_played || 0}}</td>
+						<td>{{stats.records.doubles.games_per_opponent || 0}}</td>
+					</tr>
+					<tr>
+						<td>Overall</td>
+						<td>{{stats.records.overall.longest_streak_series || 0}}</td>
+						<td>{{stats.records.overall.longest_streak_games || 0}}</td>
+						<td>{{stats.records.overall.total_days_played || 0}}</td>
+						<td>{{stats.records.overall.games_per_opponent || 0}}</td
+					</tr>
+				</tbody>
+			</table>
 		</div>
 	</div>
-	<div class="pie-chart-wrapper small-3 columns">
-		<div id="pie-chart" class="small-3 columns"></div>
-	</div>
-	<div class="clearfix"></div>
-	<div class="sparkline-wrapper small-12 columns small-centered">
-		<div id="sparkline"></div>
+	<div class="sidebar-container small-4 columns">
+		<table class="most-competitive">
+			<caption>Most Competitive</caption>
+			<thead>
+				<tr>
+					<th></th>
+					<th>record</th>
+					<th>win rate</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>{{most_competitive.name}}</td>
+					<td>{{most_competitive.wins_against}} - {{most_competitive.losses_against}}</td>
+					<td>{{most_competitive.win_rate}}%</td>
+				</tr>
+			</tbody>
+		</table>
+		<table class="most-played">
+			<caption>Most Played</caption>
+			<thead>
+				<tr>
+					<th></th>
+					<th>record</th>
+					<th>win rate</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>{{most_played.name}}</td>
+					<td>{{most_played.wins_against}} - {{most_played.losses_against}}</td>
+					<td>{{most_played.win_rate}}%</td>
+				</tr>
+			</tbody>
+		</table>
+		<table class="most-recommended">
+			<caption>Recommended</caption>
+			<thead>
+				<tr>
+					<th></th>
+					<th>record</th>
+					<th>win rate</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>{{recommended.name}}</td>
+					<td>{{recommended.wins_against}} - {{recommended.losses_against}}</td>
+					<td>{{recommended.win_rate}}%</td>
+				</tr>
+			</tbody>
+		</table>
 	</div>
 </section>

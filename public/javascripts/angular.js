@@ -1,6 +1,6 @@
 /*==============================
 =            CONFIG            =
-==============================*/
+==============================*/ 
 var myApp = angular.module('myApp', ['ngRoute', 'ngResource']).
 	config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
 		$routeProvider.
@@ -22,20 +22,31 @@ var myApp = angular.module('myApp', ['ngRoute', 'ngResource']).
 	$locationProvider.html5Mode(true);
 	}])
 	.run(function ($rootScope, authService, $location) { 
+      	$rootScope.location = $location;
       	if (authService.auth()) {
 			$location.path('/singles');
+		} else {
+			$location.path('/login');
 		}
 	});
 /*===================================
 =            CONTROLLERS            =
 ===================================*/
-myApp.controller('mainCtrl', function($scope, $location) {
+myApp.controller('mainCtrl', function($scope, $location, $rootScope) {
     $scope.isActive = function(route) {
         return route === $location.path();
     };
-
+    $scope.logout = function() {
+    	if (Modernizr.localstorage) {
+    		localStorage.clear();
+		}	
+		$scope = {};
+		$rootScope = {};
+		$location.path("/login");
+    }
 });
-myApp.controller('singlesCtrl', function($scope, $http, $location, chartFactory, $rootScope) {
+
+myApp.controller('singlesCtrl', function($scope, $http, $location, chartFactory, $rootScope, timestampConverterService, scoreBuilder) {
 	var json_data = JSON.stringify({user_id: JSON.parse(localStorage['user_id'])});
 	$http({
     	method: 'POST',
@@ -49,22 +60,24 @@ myApp.controller('singlesCtrl', function($scope, $http, $location, chartFactory,
 	      	* General user information
 	      	**/
 	      	var user_data = data.data.user_data;
-	      		$scope.total_players = user_data.length;
+	      	var user_id = JSON.parse(localStorage['user_id']);
+	      	var user = _.find(user_data, function (player) { return player._id == user_id });
+	      	if (user) {
+	      		$scope.display_name = user.username;
+	      		$scope.elo = user.elo;
+	      		$scope.total_wins = user.total_wins;
+	      		$scope.total_losses = user.total_losses;
+	      		$scope.win_rate = ($scope.total_wins / ($scope.total_wins + $scope.total_losses) * 100) || 0;
+	      		$scope.last_played;
+	      	}	
 	      	/**
 	      	* Series & game data
 	      	**/
 	      	var games = data.data.games;			
-	      	
-			
-			/**
-	      	* Build charts
-	      	**/	      	
-	      	chartFactory.makeChartData(user_data, $scope);
-	      	if (games.length > 0) {
-	      		chartFactory.makeBarData(games);
-	      		chartFactory.makePieData(games, $scope);
-	      	}
-
+	      		$scope.last_played = timestampConverterService.convert(games[games.length-1].timestamp);
+	      	scoreBuilder.setUserInfo(user_id,games);
+	      	scoreBuilder.buildAllTime($scope);
+	      	scoreBuilder.buildAllTimeSidebar($scope);
 	      	/**
 	      	* Build player list for scores entry
 	      	**/
@@ -85,9 +98,6 @@ myApp.controller('singlesCtrl', function($scope, $http, $location, chartFactory,
     });
 });
 
-myApp.controller('doublesCtrl', function($scope, $http, $location) {
-});
-
 myApp.controller('modalCtrl', function($scope, $http, $location) {
 	/**
 	* current slider values
@@ -102,12 +112,29 @@ myApp.controller('modalCtrl', function($scope, $http, $location) {
 	$scope.scores = [];
 	/**
 	* selected teammates
+	* left == t1, right == t2
 	**/
 	$scope.selected_left = [];
 	$scope.selected_right = [];
-
+	/**
+	* Team display name for chart
+	**/
+	$scope.team_header_left = '';
+	$scope.team_header_right = '';
+	/**
+	* Pagination vars
+	**/
+	$scope.currPage = 0;
+	$scope.currPage_right = 0;
+	$scope.pageSize = 9; 
+	/**
+	* Default game length
+	**/
+	$scope.curr_game_type = 21;
+	/**
+	* Prevents settings from being changed mid-series
+	**/
 	var finalized = false;
-	var curr_game_length = 21;
 
 	$("#slider-left").slider({ 
     	max: 30, 
@@ -133,6 +160,9 @@ myApp.controller('modalCtrl', function($scope, $http, $location) {
             // $('#rateToPost').attr('value', ui.value);
         }
     });
+    /**
+    * Handles player selections
+    **/
 	$scope.select = function(side, player) {
 		if (finalized) {
 			return false;
@@ -141,18 +171,59 @@ myApp.controller('modalCtrl', function($scope, $http, $location) {
 			var temp_player = _.find($scope.selected_left, function (item) { return item.id == player.id });
 			if (temp_player) {
 				$scope.selected_left = _.without($scope.selected_left, temp_player);
+		    	$scope.team_header_left = $scope.selected_left.map(function (player) { return player.name; }).join(" ");
 			} else {
 		    	$scope.selected_left.push(player); 
+		    	$scope.team_header_left = $scope.selected_left.map(function (player) { return player.name; }).join(" ");
 			}
 		} else {
 			var temp_player = _.find($scope.selected_right, function (item) { return item.id == player.id });
 			if (temp_player) {
 				$scope.selected_right = _.without($scope.selected_right, temp_player);
+		    	$scope.team_header_right = $scope.selected_right.map(function (player) { return player.name; }).join(" ");
 			} else {
 		    	$scope.selected_right.push(player); 
+		    	$scope.team_header_right = $scope.selected_right.map(function (player) { return player.name; }).join(" ");
 			}
 		}
 	};
+	/**
+	* Paginates players
+	**/
+	$scope.page = function(side, direction) {
+		if (side == 'left') {
+			if (direction == 'prev') {
+				if ($scope.currPage == 0) {
+					return false;
+				} else {
+					$scope.currPage = $scope.currPage-1;
+				}
+			} else {
+				if ($scope.pageSize * ($scope.currPage+1) <  $scope.players_for_buttons_left.length) {
+					$scope.currPage = $scope.currPage+1;
+				} else {
+					return false;
+				}
+			}
+		} else {
+			if (direction == 'prev') {
+				if ($scope.currPage_right == 0) {
+					return false;
+				} else {
+					$scope.currPage_right = $scope.currPage_right-1;
+				}
+			} else {
+				if ($scope.pageSize * ($scope.currPage_right+1) < $scope.players_for_buttons_right.length) {
+					$scope.currPage_right = $scope.currPage_right+1;
+				} else {
+					return false;
+				}
+			}
+		}
+	};
+	/**
+	* Player color on click handler
+	**/
 	$scope.itemClass = function(side, player) {
 		if (side == 'left') {
 	    	return _.find($scope.selected_left, function (item) { return item.id == player.id }) ? 'active' : '';
@@ -160,43 +231,106 @@ myApp.controller('modalCtrl', function($scope, $http, $location) {
 	    	return _.find($scope.selected_right, function (item) { return item.id == player.id }) ? 'active' : '';
 		}
 	};
-    $scope.seriesSwitch = function(series_type) {
-    	if (finalized) {
+	/**
+	* Adds game scores & teams to scores[]
+	**/
+    $scope.addGame = function() {  
+    	if ($scope.selected_left.length == 0 || $scope.selected_right.length == 0) {
+    		alert("Please choose at least one player for each team.");
     		return false;
     	}
-    	if (series_type == 'eleven') {
-    		$('.score-container .twentyone').removeClass('active');
-    		$('.score-container .eleven').addClass('active');
-    		curr_game_length = 11;
-    	} else {
-    		$('.score-container .eleven').removeClass('active');
-    		$('.score-container .twentyone').addClass('active');
-    		curr_game_length = 21;
-    	}
-    };
-    $scope.sliderChange = function(side) {
-    	if (side == 'left') {
-    		$scope.slider_left = $("#slider-left").slider("value");
-    	} else {
-    		$scope.slider_right = $("#slider-right").slider("value"); 
-    	}
-    };
-    $scope.addGame = function() {  
-    	if ($scope.scores[0].length > 4) {
+    	if ($scope.slider_left == $scope.slider_right) {
+    		alert("Tie games are not a valid score.");
     		return false;
     	}
 		finalized = true;
 		$('.player-select-button:not(.active)').attr('disabled', 'disabled');
 		// $('.series-switch-container .series:not(.active').attr('disabled', 'disabled');
-		
-		$scope.scores.push( { t1_score: $scope.slider_left, t2_score: $scope.slider_right, game_length: curr_game_length });
+		$scope.scores.push( { t1_score: $scope.slider_left, t2_score: $scope.slider_right, game_type: parseInt($scope.curr_game_type) });
+		console.log($scope.scores);
     };
+    /**
+    * Pops game from scores[]
+    **/
     $scope.removeGame = function(side) {
-    	if ($scope.scores[0].length > 0 && $scope.scores[1].length > 0) {
-    		$scope.scores[0].pop();
-    		$scope.scores[1].pop();
+    	if ($scope.scores.length > 0 && $scope.scores.length > 0) {
+    		$scope.scores.pop();
+    		$scope.scores.pop();
     	}
     };
+    /**
+    * Configures data for DB insertion, $http post
+    **/
+    $scope.submitGame = function() {
+    	console.log($scope.scores);
+    	if ($scope.scores.length == 0 || !($scope.scores.length & 1) || $scope.selected_left.length == 0 || $scope.selected_right.length == 0) {
+    		return false;
+    	}
+    	var series = {},
+			winner = [],
+			loser = [],
+			games = $scope.scores.slice();
+    	
+    	/**
+    	* Build object for DB insertion
+    	**/
+    	var t1_count = 0,
+    		t2_count = 0;
+    	_.each($scope.scores, function (game) {
+    		(game.t1_score > game.t2_score) ? t1_count = t1_count+1 : t2_count = t2_count+1;
+    	});
+    	/**
+    	* if t1 won
+    	**/
+    	if (t1_count > t2_count) {
+    		winner = $scope.selected_left.slice();
+    		loser = $scope.selected_right.slice();
+    		_.each(games, function (game) {
+    			game.winner_score = game.t1_score;
+    			game.loser_score = game.t2_score;
+    			delete(game.t1_score);
+    			delete(game.t2_score);
+    		});
+    	} else {
+    		winner = $scope.selected_right.slice();
+    		loser = $scope.selected_left.slice();
+    		_.each(games, function (game) {
+    			game.winner_score = game.t2_score;
+    			game.loser_score = game.t1_score;
+    			delete(game.t1_score);
+    			delete(game.t2_score);
+    		});
+    	}
+    	/**
+    	* Add created arrays to series object
+    	**/
+    	series.winner = winner; 
+		series.loser = loser;
+    	series.games = games;
+    	/**
+    	* Mongo doesn't like inserting these
+    	**/
+    	_.each(series.winner, function (player) {
+    		delete player.$$hashKey;
+    	});
+    	_.each(series.loser, function (player) {
+    		delete player.$$hashKey;
+    	});
+		
+		$http({
+			method: 'POST',
+			data: JSON.stringify(series),
+			url: '/api/submitGame'
+		}).
+		success(function (data, status) {
+			$('#add-game-modal').foundation('reveal', 'close');
+		}).
+		error(function (data, status) {
+		});
+    };
+    /**
+    * Resets all scope values
+    **/
     $scope.resetModal = function() {
     	$scope.slider_right = 0;
     	$scope.slider_left = 0;
@@ -246,6 +380,29 @@ myApp.service('authService', function() {
 			return false;
 		}
 	};
+});
+
+myApp.service('timestampConverterService', function() {
+	this.convert = function(previous) {
+		var current = Date.now();
+		var msPerMinute = 60 * 1000;
+	    var msPerHour = msPerMinute * 60;
+	    var msPerDay = msPerHour * 24;
+	    var msPerMonth = msPerDay * 30;
+	    var msPerYear = msPerDay * 365;
+
+	    var elapsed = current - previous;
+
+	    if (elapsed < msPerMonth) {
+	    	if (Math.round(elapsed/msPerDay) === 0) {
+	    		return 'today';
+	    	} else {
+	        	return Math.round(elapsed/msPerDay) + ' days ago';   
+	    	}
+	    } else if (elapsed < msPerYear) {
+	        return Math.round(elapsed/msPerMonth)*30 + ' days ago';   
+	    }
+	}
 });
 
 myApp.factory('chartFactory', function() {
@@ -510,4 +667,433 @@ myApp.factory('chartFactory', function() {
 		    });
 		}
 	};
+});
+
+myApp.factory('scoreBuilder', function () {
+	var games;
+	var user_id;
+	return {
+		setUserInfo: function(_id, game_data) {
+			user_id = _id;
+			games = game_data;
+		},
+		buildAllTimeSidebar: function($scope) {
+			$scope.most_competitive = null,
+			$scope.most_played = {},
+			$scope.recommended = {};
+			/**
+			* Bootstrapping this function to get games per opponent
+			**/
+			$scope.stats.records.singles.games_per_opponent = 0,
+			$scope.stats.records.doubles.games_per_opponent = 0,
+			$scope.stats.records.overall.games_per_opponent = 0;
+
+			var players = [],
+				singles_players = [],
+				doubles_players = [];
+			
+			for(var i=0, j=games.length; j > i; i++) {
+				var curr_series = games[i];
+				/**
+				* If user won, opponents are on losing team
+				**/
+				if(_.findWhere(curr_series.winner, { id : user_id })) {
+					_.each(curr_series.loser, function (opponent) {
+						var player = _.findWhere(players, { id : opponent.id });
+						var singles_player = _.findWhere(singles_players, { id : opponent.id });
+						var doubles_player = _.findWhere(doubles_players, { id : opponent.id });
+						/**
+						* If the user has played this person before
+						**/
+						if (player) {
+							player.wins_against++;
+						} else {
+							var player = {};
+								player.id = opponent.id;
+								player.name = opponent.name;
+								player.wins_against = 1;
+								player.losses_against = 0;
+								players.push(player);
+						}
+
+						if (curr_series.loser.length == 1) {
+							/**
+							* Player for singles games per opponent
+							**/
+							if (singles_player) {
+								singles_player.played++;
+							} else {
+								var player = {};
+									player.id = opponent.id;
+									player.played = 1;
+									singles_players.push(player);
+							}
+						} else {
+							/**
+							* Player for doubles games per opponent
+							**/
+							if (doubles_player) {
+								doubles_player.played++;
+							} else {
+								var player = {};
+									player.id = opponent.id;
+									player.played = 1;
+									doubles_players.push(player);
+							}
+						}
+					});
+				} else {
+					_.each(curr_series.winner, function (opponent) {
+						/**
+						* If the user has played this person before
+						**/
+						var player = _.findWhere(players, { id : opponent.id });
+						var singles_player = _.findWhere(singles_players, { id : opponent.id });
+						var doubles_player = _.findWhere(doubles_players, { id : opponent.id });
+						if (player) {
+							player.losses_against++;
+						} else {
+							var player = {};
+								player.id = opponent.id;
+								player.name = opponent.name;
+								player.losses_against = 1;
+								player.wins_against = 0;
+								players.push(player);
+						}
+						if (curr_series.loser.length == 1) {
+							/**
+							* Player for singles games per opponent
+							**/
+							if (singles_player) {
+								singles_player.played++;
+							} else {
+								var player = {};
+									player.id = opponent.id;
+									player.played = 1;
+									singles_players.push(player);
+							}
+						} else {
+							/**
+							* Player for doubles games per opponent
+							**/
+							if (doubles_player) {
+								doubles_player.played++;
+							} else {
+								var player = {};
+									player.id = opponent.id;
+									player.played = 1;
+									doubles_players.push(player);
+							}
+						}
+					});
+				}
+			}
+			var total_games_singles = _.reduce(singles_players, function (memo, player) { return memo + player.played },0);
+			var total_games_doubles = _.reduce(doubles_players, function (memo, player) { return memo + player.played },0);
+
+			$scope.stats.records.singles.games_per_opponent = Math.round(total_games_singles / singles_players.length);
+			$scope.stats.records.doubles.games_per_opponent = Math.round(total_games_doubles / doubles_players.length);
+			$scope.stats.records.overall.games_per_opponent = Math.round($scope.stats.records.singles.games_per_opponent / $scope.stats.records.doubles.games_per_opponent);
+
+			/**
+			* Calculate win rates
+			**/
+			for(var i=0, j=players.length; j > i; i++) {
+				var curr_player = players[i];
+				curr_player.win_rate = curr_player.wins_against / (curr_player.wins_against + curr_player.losses_against) * 100;
+			}
+			players = _.sortBy(players, function (player) { return player.win_rate; });
+			/**
+			* find most competitive
+			**/
+			_.each(players, function (player) { 
+				if ($scope.most_competitive == null || Math.abs(player.win_rate - 50) < Math.abs($scope.most_competitive.win_rate - 50)) {
+					$scope.most_competitive = player;
+				}
+			});  
+			$scope.most_played = _.max(players, function (player) { return (player.wins_against + player.losses_against) });
+			$scope.recommended = _.min(players, function (player) { return (player.wins_against + player.losses_against) });
+		},
+		buildMonthSidebar: function($scope) {
+
+		},
+		buildYearSidebar: function($scope) {
+
+		},
+		buildAllTime: function($scope) {
+			/**
+			* Series data
+			* Games played, win-rate, streak, +/-
+			**/
+			$scope.stats = {};
+			$scope.stats.series = {},
+				$scope.stats.series.singles = {},
+					$scope.stats.series.singles.games_played = 0,
+					$scope.stats.series.singles.win_rate = 0,
+					$scope.stats.series.singles.streak = 0,
+					$scope.stats.series.singles.plus_minus = 0,
+				$scope.stats.series.doubles = {},
+					$scope.stats.series.doubles.games_played = 0,
+					$scope.stats.series.doubles.win_rate = 0,
+					$scope.stats.series.doubles.streak = 0,
+					$scope.stats.series.doubles.plus_minus = 0,
+				$scope.stats.series.overall = {},
+					$scope.stats.series.overall.games_played = 0,
+					$scope.stats.series.overall.win_rate = 0,
+					$scope.stats.series.overall.streak = 0,
+					$scope.stats.series.overall.plus_minus = 0;	
+			/**
+			* Individual game data
+			**/
+			$scope.stats.games= {},
+				$scope.stats.games.singles = {},
+					$scope.stats.games.singles.games_played = 0,
+					$scope.stats.games.singles.win_rate = 0,
+					$scope.stats.games.singles.streak = 0,
+					$scope.stats.games.singles.plus_minus = 0,
+				$scope.stats.games.doubles = {},
+					$scope.stats.games.doubles.games_played = 0,
+					$scope.stats.games.doubles.win_rate = 0,
+					$scope.stats.games.doubles.streak = 0,
+					$scope.stats.games.doubles.plus_minus = 0,
+				$scope.stats.games.overall = {},
+					$scope.stats.games.overall.games_played = 0,
+					$scope.stats.games.overall.win_rate = 0,
+					$scope.stats.games.overall.streak = 0,
+					$scope.stats.games.overall.plus_minus = 0;	
+			/**
+			* Record data
+			**/
+			$scope.stats.records = {},
+				$scope.stats.records.singles = {},
+					$scope.stats.records.singles.longest_streak_series = 0,
+					$scope.stats.records.singles.longest_streak_games = 0,
+					$scope.stats.records.singles.total_days_played = 0,
+					$scope.stats.records.singles.games_per_opponent = 0;
+				$scope.stats.records.doubles = {},
+					$scope.stats.records.doubles.longest_streak_series = 0,
+					$scope.stats.records.doubles.longest_streak_games = 0,
+					$scope.stats.records.doubles.total_days_played = 0,
+					$scope.stats.records.doubles.games_per_opponent = 0;
+				$scope.stats.records.overall = {},
+				$scope.stats.records.overall.longest_streak_series = 0,
+				$scope.stats.records.overall.longest_streak_games = 0,
+				$scope.stats.records.overall.total_days_played = 0,
+				$scope.stats.records.overall.games_per_opponent = 0;
+			/**
+			* Helper vars
+			**/
+			var singles_wins = 0,
+				doubles_wins = 0,
+				game_singles_wins = 0,
+				game_doubles_wins = 0;
+			var temp_singles = [],
+				temp_doubles = [];	
+			/**
+			* Calculate total days played
+			**/
+			$scope.stats.records.overall.total_days_played = _.uniq(games, function() { return this.timestamp }).length;
+			
+			for(var i=0, j=games.length; j > i; i ++) {
+				var curr_series = games[i];
+				var temp_plus_minus = 0;
+				/**
+				* If user won
+				**/
+				if(_.findWhere(curr_series.winner, { id : user_id })) {
+					/**
+					* If doubles game
+					**/
+					if (curr_series.winner.length > 1) {
+						temp_doubles.push(curr_series);
+						/**
+						* Calculate curr doubles streak
+						**/
+						if ($scope.stats.series.doubles.streak < 0) {
+							$scope.stats.series.doubles.streak = 1
+						} else {	
+							$scope.stats.series.doubles.streak++;
+							/**
+							* If current record doubles streak < current doubles streak
+							**/
+							if ($scope.stats.records.doubles.longest_streak_series < $scope.stats.series.doubles.streak) {
+								$scope.stats.records.doubles.longest_streak_series = $scope.stats.series.doubles.streak; 
+							}
+						}
+						doubles_wins = doubles_wins+1;
+						$scope.stats.series.doubles.games_played = $scope.stats.series.doubles.games_played+1;
+
+						/**
+						* For each game in curr_series
+						**/
+						_.each(curr_series.series, function (game) {
+							$scope.stats.series.doubles.plus_minus += (game.winner_score - game.loser_score);
+							$scope.stats.games.doubles.games_played = $scope.stats.games.doubles.games_played+1;
+
+							/**
+							* build individual game data
+							**/
+							if (game.winner_score > game.loser_score) {
+								game_doubles_wins = game_doubles_wins+1;
+								($scope.stats.games.overall.streak < 0) ? $scope.stats.games.overall.streak = 1 : $scope.stats.games.overall.streak++;
+								if ($scope.stats.games.doubles.streak < 0) {
+									$scope.stats.games.doubles.streak = 1
+									if ($scope.stats.records.doubles.longest_streak_games == 0) {
+										$scope.stats.records.doubles.longest_streak_games = 1;
+									}
+								} else {	
+									$scope.stats.games.doubles.streak++;
+									if ($scope.stats.records.doubles.longest_streak_games < $scope.stats.games.doubles.streak) {
+										$scope.stats.records.doubles.longest_streak_games = $scope.stats.games.doubles.streak; 
+									}
+								}
+							}							
+						});	
+					/**
+					* else singles game
+					**/
+					} else {
+						temp_singles.push(curr_series);
+						if ($scope.stats.series.singles.streak < 0) {
+							$scope.stats.series.singles.streak = 1
+							if ($scope.stats.records.singles.longest_streak_series == 0) {
+								$scope.stats.records.singles.longest_streak_series = 1;
+							}
+						} else {	
+							$scope.stats.series.singles.streak++;
+							if ($scope.stats.records.singles.longest_streak_series < $scope.stats.series.singles.streak) {
+								$scope.stats.records.singles.longest_streak_series = $scope.stats.series.singles.streak; 
+							}
+						}						
+						singles_wins = singles_wins+1;
+						$scope.stats.series.singles.games_played = $scope.stats.series.singles.games_played+1;
+
+						_.each(curr_series.series, function (game) {
+							$scope.stats.series.singles.plus_minus += (game.winner_score - game.loser_score);
+							$scope.stats.games.singles.games_played = $scope.stats.games.singles.games_played+1;
+
+							if (game.winner_score > game.loser_score) {
+								game_singles_wins = game_singles_wins+1;
+								if ($scope.stats.games.singles.streak < 0) {
+									$scope.stats.games.singles.streak = 1
+									if ($scope.stats.records.singles.longest_streak_games == 0) {
+										$scope.stats.records.singles.longest_streak_games = 1;
+									}
+								} else {	
+									$scope.stats.games.singles.streak++;
+									if ($scope.stats.records.singles.longest_streak_games < $scope.stats.games.singles.streak) {
+										$scope.stats.records.singles.longest_streak_games = $scope.stats.games.singles.streak; 
+									}
+								}
+								if ($scope.stats.games.overall.streak < 0) {
+									$scope.stats.games.overall.streak = 1 
+									if ($scope.stats.records.overall.longest_streak_games == 0) {
+										$scope.stats.records.overall.longest_streak_games = 1;
+									}
+								} else {
+									$scope.stats.games.overall.streak++;
+									if ($scope.stats.records.overall.longest_streak_games < $scope.stats.games.overall.streak) {
+										$scope.stats.records.overall.longest_streak_games = $scope.stats.games.overall.streak; 
+									}
+								}
+							}								
+						});
+					}
+					/**
+					* Overall series streak
+					**/
+					if ($scope.stats.series.overall.streak < 0) {
+						$scope.stats.series.overall.streak = 1 
+						if ($scope.stats.records.overall.longest_streak_series == 0) {
+							$scope.stats.records.overall.longest_streak_series = 1;
+						}
+					} else {
+						$scope.stats.series.overall.streak++;
+						if ($scope.stats.records.overall.longest_streak_series < $scope.stats.series.overall.streak) {
+							$scope.stats.records.overall.longest_streak_series = $scope.stats.series.overall.streak; 
+						}
+					}
+				/**
+				* Else user lost
+				**/
+				} else {
+					/**
+					* If doubles game
+					**/
+					if (curr_series.winner.length > 1) {
+						($scope.stats.series.doubles.streak > 0) ? $scope.stats.series.doubles.streak = -1 : $scope.stats.series.doubles.streak--;
+						$scope.stats.series.doubles.games_played = $scope.stats.series.doubles.games_played+1;
+
+						_.each(curr_series.series, function (game) {
+							$scope.stats.series.doubles.plus_minus += (game.loser_score - game.winner_score);
+							$scope.stats.games.doubles.games_played = $scope.stats.games.doubles.games_played+1;
+							if (game.winner_score > game.loser_score) {
+								($scope.stats.games.doubles.streak > 0) ? $scope.stats.games.doubles.streak = -1 : $scope.stats.games.doubles.streak--;
+								($scope.stats.games.overall.streak > 0) ? $scope.stats.games.overall.streak = -1 : $scope.stats.games.overall.streak--;	
+							}
+						});	
+					} else {
+						($scope.stats.series.singles.streak > 0) ? $scope.stats.series.singles.streak = -1 : $scope.stats.series.singles.streak--;
+						$scope.stats.series.singles.games_played = $scope.stats.series.singles.games_played+1;
+
+						_.each(curr_series.series, function (game) {
+							$scope.stats.series.singles.plus_minus += (game.loser_score - game.winner_score);
+							$scope.stats.games.singles.games_played = $scope.stats.games.singles.games_played+1;
+							if (game.winner_score > game.loser_score) {
+								($scope.stats.games.singles.streak > 0) ? $scope.stats.games.singles.streak = -1 : $scope.stats.games.singles.streak--;
+								($scope.stats.games.overall.streak > 0) ? $scope.stats.games.overall.streak = -1 : $scope.stats.games.overall.streak--;	
+							}
+						});
+					}
+					($scope.stats.series.overall.streak > 0) ? $scope.stats.series.overall.streak = -1 : $scope.stats.series.overall.streak--;
+				}
+			}
+			$scope.stats.series.singles.win_rate = Math.round(singles_wins / ($scope.stats.series.singles.games_played) * 100);
+			$scope.stats.series.doubles.win_rate = Math.round(doubles_wins / ($scope.stats.series.doubles.games_played) * 100);
+
+			/**
+			* Build overall series stats
+			**/
+			$scope.stats.series.overall.games_played = $scope.stats.series.singles.games_played + $scope.stats.series.doubles.games_played;
+			$scope.stats.series.overall.plus_minus = $scope.stats.series.singles.plus_minus + $scope.stats.series.doubles.plus_minus;
+			$scope.stats.series.overall.win_rate = Math.round((singles_wins+doubles_wins) / $scope.stats.series.overall.games_played * 100);
+			
+			/**
+			* individual game +/- is the same as series
+			**/
+			$scope.stats.games.singles.plus_minus = $scope.stats.series.singles.plus_minus;
+			$scope.stats.games.doubles.plus_minus = $scope.stats.series.doubles.plus_minus;
+			$scope.stats.games.overall.plus_minus = $scope.stats.series.overall.plus_minus;
+			$scope.stats.games.overall.games_played = $scope.stats.games.singles.games_played + $scope.stats.games.doubles.games_played;
+
+			$scope.stats.games.singles.win_rate = Math.round(game_singles_wins / ($scope.stats.games.singles.games_played) * 100);
+			$scope.stats.games.doubles.win_rate = Math.round(game_doubles_wins / ($scope.stats.games.doubles.games_played) * 100);
+			$scope.stats.games.overall.win_rate = Math.round((game_singles_wins+game_doubles_wins) / ($scope.stats.games.overall.games_played) * 100);
+			
+			/**
+			* Singles/Doubles total games played
+			**/
+			if (temp_singles.length > 0) {
+				$scope.stats.records.singles.total_days_played = _.uniq(temp_singles, function() { return this.timestamp }).length;
+			}
+			if (temp_doubles.length > 0) {
+				$scope.stats.records.doubles.total_days_played = _.uniq(temp_doubles, function() { return this.timestamp }).length;
+			}
+		},
+		buildMonth: function(stats) {
+
+		},
+		buildYear: function(stats) {
+
+		}
+	}
+});
+
+myApp.filter('startFrom', function() {
+    return function(input, start) {
+    	if (input) {
+	        start = +start; //parse to int
+	        return input.slice(start);
+    	}
+    }
 });
