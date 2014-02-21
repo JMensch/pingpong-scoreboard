@@ -23,10 +23,6 @@ exports.user_info = function (req, res) {
 	**/
   	mongo.open(function (err, mongo) {
 	  	var db = mongo.db("pingpong");
-	  	/**
-	  	* We only want games newer than 2 weeks ago
-	  	**/ 
-	  	// var twoweeksago = new Date(new Date().getTime() - 12096e5);
 	  	var results = {};
 	  	var user_id = req.body.user_id;
 	  	//declare collection
