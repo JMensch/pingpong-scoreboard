@@ -4,7 +4,7 @@
 			<li class="display-name"><span>{{display_name || "Error"}}</span></li>
 			<li><span class="header">win rate</span><strong>{{win_rate}}%</strong></li>
 			<li><span class="header">record</span><strong>{{total_wins}} - {{total_losses}}</strong></li>
-			<li><span class="header">last played</span>{{last_played || "never"}}</li>
+			<li><span class="header">last played</span>{{last_played || 'never'}}</li>
 			<li><span class="header">elo</span>{{elo}}</li>
 		</ul>
 	</div>
@@ -129,7 +129,7 @@
 						<td>{{stats.records.overall.longest_streak_series || 0}}</td>
 						<td>{{stats.records.overall.longest_streak_games || 0}}</td>
 						<td>{{stats.records.overall.total_days_played || 0}}</td>
-						<td>{{stats.records.overall.games_per_opponent || 0}}</td
+						<td>{{stats.records.overall.games_per_opponent || 0}}</td>
 					</tr>
 				</tbody>
 			</table>
