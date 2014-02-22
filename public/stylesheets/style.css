@@ -4,6 +4,9 @@
 .full-row {
   width: 100% !important; }
 
+.error {
+  color: #fff; }
+
 /*=============================
 =            FONTS            =
 =============================*/
@@ -121,8 +124,7 @@ html, body {
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
-  background-size: cover;
-  }
+  background-size: cover; }
 
 .singles .timespan-select {
   padding: 0;
@@ -332,3 +334,5 @@ html, body {
     background: #f77f00; }
     .login button:hover {
       opacity: 0.9; }
+  .login p {
+    color: #fff; }
