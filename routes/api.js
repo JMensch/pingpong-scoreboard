@@ -31,12 +31,12 @@ exports.user_info = function (req, res) {
 	  			function (err, cursor) {
   				if (err) {
   					res.json({ user_data: err });
-  					mongo.close();
+  					db.close();
   				} else {
   					cursor.toArray(function (err, result) {
   						if (err) {
   							res.json({ user_data: err });
-  							mongo.close();
+  							db.close();
   						} else {
   							for(var i = 0, j = result.length; j > i; i++) {
   								result[i]._id = result[i]._id.toHexString();
@@ -65,14 +65,14 @@ exports.user_info = function (req, res) {
 						  				cursor.toArray(function (err, result) {
 						  					if (err) {
 						  						res.json({ games: err });
-						  						mongo.close();
+						  						db.close();
 						  					} else {
 						  						for (var i=0; result.length > i; i++) {
 						  							result[i].timestamp = result[i]._id.getTimestamp();
 						  						}
 						  						results.games = result;
 						  						res.json({ data: results });
-						  						mongo.close();
+						  						db.close();
 						  					}
 						  				});
 					  			});
@@ -99,10 +99,10 @@ exports.login = function(req, res) {
 	  			function (err, result) {
 	  				if (err) {
 	  					res.json({ user_data: err });
-	  					mongo.close();
+	  					db.close();
 	  				} else {
 					  	res.json({ user_id: result._id });
-					  	mongo.close();
+					  	db.close();
 	  				}
 	  		});
 	  	});	
@@ -124,11 +124,11 @@ exports.submitGame = function(req, res) {
 					if (err) {
 						console.log(err);
 						res.json({ err: err });
-						mongo.close();
+						db.close();
 					} else {
 						console.log(result);
 						res.json({ result: result });
-						mongo.close();
+						db.close();
 					}
 			});
 		});
@@ -149,6 +149,6 @@ exports.insertCSV = function(req, res) {
 				});
 			}
 		});
-		// mongo.close();
+		// db.close();
 	});
 }

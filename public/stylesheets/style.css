@@ -116,13 +116,13 @@ nav.main-nav {
 /*================================
 =            SINGLES PARTIAL            =
 ================================*/
-.background-image {
+html, body {
   background: linear-gradient(rgba(23, 22, 23, 0.6), rgba(23, 22, 23, 0.6)), url("../img/tembo-background.jpg") no-repeat center center fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
-  height: 100vh; }
+  }
 
 .singles .timespan-select {
   padding: 0;
