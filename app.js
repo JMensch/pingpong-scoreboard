@@ -11,7 +11,7 @@ var express = require('express'),
 
 var app = express();
 // all environments
-app.use(express.favicon(__dirname + '/public/images/favicon.png')); 
+// app.use(express.favicon()); 
 app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/views');
 app.engine('html', require('ejs').renderFile);
@@ -19,6 +19,7 @@ app.use(express.logger('dev'));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.favicon(__dirname + '/public/img/favicon.ico'));
 app.use(app.router);
 
 /**
