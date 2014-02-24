@@ -35,8 +35,9 @@
 				</div>
 			</nav>
 		</header>
-		<div ng-view class="row"></div>
-		
+		<!-- <div class="full-row background-image"> -->
+			<div ng-view class="row"></div>
+		<!-- </div> -->
 		<!-- Add Games Modal -->
 		<div ng-controller="modalCtrl" id="add-game-modal" class="reveal-modal add-game-modal" data-reveal> 
 			<div class="players-select left small-4 columns">
@@ -115,6 +116,7 @@
 		<!-- Help Modal -->
 		<div id="help-modal" class="reveal-modal help-modal">
 			<h2>HELP</h2>
+			<a class="close-reveal-modal">&#215;</a>
 		</div>
 
 	  	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
