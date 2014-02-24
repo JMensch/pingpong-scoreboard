@@ -1297,5 +1297,4 @@ var data = [
     "game_type":21,
     "series_id":38
   }
-
 ]
