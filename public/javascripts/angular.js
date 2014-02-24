@@ -53,10 +53,9 @@ myApp.controller('singlesCtrl', function($scope, $http, $location, chartFactory,
 		/**
 		* TODO: do this in a less hacky way
 		**/
-		$('.timespan-select a').css('color', '#fff');
-		$('.timespan-select li').css('border', 'none');
+		$('.timespan-select li').removeClass('active');
 		var el = $event.target;
-		$(el).css('color', '#f77f00').parent().css('border-bottom', '1px solid #f77f00');
+		$(el).parent().addClass('active');
 	};
 	var json_data = JSON.stringify({user_id: JSON.parse(localStorage['user_id'])});
 	$http({
