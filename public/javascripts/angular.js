@@ -47,6 +47,17 @@ myApp.controller('mainCtrl', function($scope, $location, $rootScope) {
 });
 
 myApp.controller('singlesCtrl', function($scope, $http, $location, chartFactory, $rootScope, timestampConverterService, scoreBuilder) {
+	$scope.timeChange = function(timeframe, $event) {
+		scoreBuilder.build($scope, timeframe);
+		scoreBuilder.buildSidebar($scope, timeframe);
+		/**
+		* TODO: do this in a less hacky way
+		**/
+		$('.timespan-select a').css('color', '#fff');
+		$('.timespan-select li').css('border', 'none');
+		var el = $event.target;
+		$(el).css('color', '#f77f00').parent().css('border-bottom', '1px solid #f77f00');
+	};
 	var json_data = JSON.stringify({user_id: JSON.parse(localStorage['user_id'])});
 	$http({
     	method: 'POST',
@@ -76,8 +87,8 @@ myApp.controller('singlesCtrl', function($scope, $http, $location, chartFactory,
 	      	var games = data.data.games;			
 	      		$scope.last_played = timestampConverterService.convert(games[games.length-1].timestamp);
 	      	scoreBuilder.setUserInfo(user_id,games);
-	      	scoreBuilder.buildAllTime($scope);
-	      	scoreBuilder.buildAllTimeSidebar($scope);
+	      	scoreBuilder.build($scope, 'all-time');
+	      	scoreBuilder.buildSidebar($scope, 'all-time');
 	      	/**
 	      	* Build player list for scores entry
 	      	**/
@@ -670,14 +681,34 @@ myApp.factory('chartFactory', function() {
 });
 
 myApp.factory('scoreBuilder', function () {
-	var games;
+	var all_games;
 	var user_id;
 	return {
 		setUserInfo: function(_id, game_data) {
 			user_id = _id;
-			games = game_data;
+			all_games = game_data;
 		},
-		buildAllTimeSidebar: function($scope) {
+		buildSidebar: function($scope, timeframe) {
+			var games;
+			if (timeframe == "all-time") {
+				games = all_games.slice()
+			} else if (timeframe == "month") {
+				var currMonth = new Date().getMonth();
+				games = _.filter(all_games, function (game) 
+					{ 
+						var date = new Date(game.timestamp);
+						var month = date.getMonth(); 
+						return month == currMonth; 
+					});
+			} else {
+				var currYear = new Date().getYear();
+				games = _.filter(all_games, function (game) 
+					{ 
+						var date = new Date(game.timestamp);
+						var year = date.getYear(); 
+						return year == currYear; 
+					});
+			}
 			$scope.most_competitive = null,
 			$scope.most_played = {},
 			$scope.recommended = {};
@@ -814,13 +845,27 @@ myApp.factory('scoreBuilder', function () {
 			$scope.most_played = _.max(players, function (player) { return (player.wins_against + player.losses_against) });
 			$scope.recommended = _.min(players, function (player) { return (player.wins_against + player.losses_against) });
 		},
-		buildMonthSidebar: function($scope) {
-
-		},
-		buildYearSidebar: function($scope) {
-
-		},
-		buildAllTime: function($scope) {
+		build: function($scope, timeframe) {
+			var games;
+			if (timeframe == "all-time") {
+				games = all_games.slice()
+			} else if (timeframe == "month") {
+				var currMonth = new Date().getMonth();
+				games = _.filter(all_games, function (game) 
+					{ 
+						var date = new Date(game.timestamp);
+						var month = date.getMonth(); 
+						return month == currMonth; 
+					});
+			} else {
+				var currYear = new Date().getYear();
+				games = _.filter(all_games, function (game) 
+					{ 
+						var date = new Date(game.timestamp);
+						var year = date.getYear(); 
+						return year == currYear; 
+					});
+			}
 			/**
 			* Series data
 			* Games played, win-rate, streak, +/-
@@ -1079,12 +1124,6 @@ myApp.factory('scoreBuilder', function () {
 			if (temp_doubles.length > 0) {
 				$scope.stats.records.doubles.total_days_played = _.uniq(temp_doubles, function() { return this.timestamp }).length;
 			}
-		},
-		buildMonth: function(stats) {
-
-		},
-		buildYear: function(stats) {
-
 		}
 	}
 });
