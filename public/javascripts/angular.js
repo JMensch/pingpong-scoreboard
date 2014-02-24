@@ -999,9 +999,11 @@ myApp.factory('scoreBuilder', function () {
 										$scope.stats.records.doubles.longest_streak_games = $scope.stats.games.doubles.streak; 
 									}
 								}
+							} else {
+								($scope.stats.games.singles.streak > 0) ? $scope.stats.games.singles.streak = -1 : $scope.stats.games.singles.streak--;
+								($scope.stats.games.overall.streak > 0) ? $scope.stats.games.overall.streak = -1 : $scope.stats.games.overall.streak--;	
 							}							
 						});	
-
 					/**
 					* else singles game
 					**/
@@ -1049,6 +1051,9 @@ myApp.factory('scoreBuilder', function () {
 										$scope.stats.records.overall.longest_streak_games = $scope.stats.games.overall.streak; 
 									}
 								}
+							} else {
+								($scope.stats.games.doubles.streak > 0) ? $scope.stats.games.doubles.streak = -1 : $scope.stats.games.doubles.streak--;
+								($scope.stats.games.overall.streak > 0) ? $scope.stats.games.overall.streak = -1 : $scope.stats.games.overall.streak--;	
 							}								
 						});
 					}
