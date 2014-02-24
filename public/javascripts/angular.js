@@ -830,7 +830,7 @@ myApp.factory('scoreBuilder', function () {
 			**/
 			for(var i=0, j=players.length; j > i; i++) {
 				var curr_player = players[i];
-				curr_player.win_rate = curr_player.wins_against / (curr_player.wins_against + curr_player.losses_against) * 100;
+				curr_player.win_rate = Math.round(curr_player.wins_against / (curr_player.wins_against + curr_player.losses_against) * 100);
 			}
 			players = _.sortBy(players, function (player) { return player.win_rate; });
 			/**
