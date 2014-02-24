@@ -186,6 +186,7 @@ myApp.controller('modalCtrl', function($scope, $http, $location) {
 		    	$scope.selected_left.push(player); 
 		    	$scope.team_header_left = $scope.selected_left.map(function (player) { return player.name; }).join(" ");
 			}
+			// $scope.$apply();
 		} else {
 			var temp_player = _.find($scope.selected_right, function (item) { return item.id == player.id });
 			if (temp_player) {
@@ -195,6 +196,7 @@ myApp.controller('modalCtrl', function($scope, $http, $location) {
 		    	$scope.selected_right.push(player); 
 		    	$scope.team_header_right = $scope.selected_right.map(function (player) { return player.name; }).join(" ");
 			}
+			// $scope.$apply();
 		}
 	};
 	/**
@@ -348,11 +350,16 @@ myApp.controller('modalCtrl', function($scope, $http, $location) {
     	$scope.scores[1] = [];
     	$scope.selected_left = [];
     	$scope.selected_right = [];
-
+    	$scope.team_header_right = '';
+    	$scope.team_header_left = '';
+    	finalized = false;
     	$('.series').show();
     	$('#add-game-modal table td').empty();
+    	$('.player-select-button:not(.active)').attr('disabled', false);
     	$('#add-game-modal').find('.active').removeClass('active');
     	$('.player-select .button').removeAttr('disabled');
+    	// $('.team-left, .team-right').empty();
+    	$('.ui-slider-handle').css('left', 0);
     };
 });
 
@@ -947,7 +954,6 @@ myApp.factory('scoreBuilder', function () {
 				* If user won
 				**/
 				if(_.findWhere(curr_series.winner, { id : user_id })) {
-					console.log(curr_series);
 					_.each(curr_series.series, function (game) {
 						if (game.winner_score > game.loser_score) {
 							count_wins_for_test++;
