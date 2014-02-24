@@ -933,6 +933,8 @@ myApp.factory('scoreBuilder', function () {
 				game_doubles_wins = 0;
 			var temp_singles = [],
 				temp_doubles = [];	
+
+			var count_wins_for_test = 0;
 			/**
 			* Calculate total days played
 			**/
@@ -945,6 +947,12 @@ myApp.factory('scoreBuilder', function () {
 				* If user won
 				**/
 				if(_.findWhere(curr_series.winner, { id : user_id })) {
+					console.log(curr_series);
+					_.each(curr_series.series, function (game) {
+						if (game.winner_score > game.loser_score) {
+							count_wins_for_test++;
+						}
+					});
 					/**
 					* If doubles game
 					**/
@@ -993,6 +1001,7 @@ myApp.factory('scoreBuilder', function () {
 								}
 							}							
 						});	
+
 					/**
 					* else singles game
 					**/
@@ -1074,6 +1083,10 @@ myApp.factory('scoreBuilder', function () {
 							if (game.winner_score > game.loser_score) {
 								($scope.stats.games.doubles.streak > 0) ? $scope.stats.games.doubles.streak = -1 : $scope.stats.games.doubles.streak--;
 								($scope.stats.games.overall.streak > 0) ? $scope.stats.games.overall.streak = -1 : $scope.stats.games.overall.streak--;	
+							} else {
+								game_doubles_wins++;
+								($scope.stats.games.doubles.streak < 0) ? $scope.stats.games.doubles.streak = 1 : $scope.stats.games.doubles.streak++;
+								($scope.stats.games.overall.streak < 0) ? $scope.stats.games.overall.streak = 1 : $scope.stats.games.overall.streak++;
 							}
 						});	
 					} else {
@@ -1086,6 +1099,10 @@ myApp.factory('scoreBuilder', function () {
 							if (game.winner_score > game.loser_score) {
 								($scope.stats.games.singles.streak > 0) ? $scope.stats.games.singles.streak = -1 : $scope.stats.games.singles.streak--;
 								($scope.stats.games.overall.streak > 0) ? $scope.stats.games.overall.streak = -1 : $scope.stats.games.overall.streak--;	
+							} else {
+								game_singles_wins++;
+								($scope.stats.games.singles.streak < 0) ? $scope.stats.games.singles.streak = 1 : $scope.stats.games.singles.streak++;
+								($scope.stats.games.overall.streak < 0) ? $scope.stats.games.overall.streak = 1 : $scope.stats.games.overall.streak++;	
 							}
 						});
 					}

@@ -38,7 +38,7 @@ $(function () {
 		if (data[j].series_id > curr_series_id) {
 			curr_series.winner = curr_series.series[0].winner;
 			curr_series.loser = curr_series.series[0].loser;
-			curr_series.series_id = curr_series_id;
+            curr_series_id = curr_series.series_id;
 			for(var q=0; curr_series.series.length > q; q++) {
 				delete curr_series.series[q].series_id;
 				delete curr_series.series[q].winner;
@@ -62,11 +62,13 @@ $(function () {
 		var christine = "52f286f296aea74f5a6ee2cb";
 		var steve = "52f2871d96aea74f5a6ee2cd";
 		var sam = "52f2875496aea74f5a6ee2d0";
+        var games = 0;
 	for(var i=0; full_data.length > i; i++) {
 		_.each(full_data[i].loser, function(person) {
 			if (person.name == 'jon') {
 				person.id = jon;
 			} else if (person.name == 'james') {
+                games += full_data[i].series.length;
 				person.id = james;
 			} else if (person.name == 'mike') {
 				person.id = mike;
@@ -90,6 +92,7 @@ $(function () {
 			if (person.name == 'jon') {
 				person.id = jon;
 			} else if (person.name == 'james') {
+                games += full_data[i].series.length;
 				person.id = james;
 			} else if (person.name == 'mike') {
 				person.id = mike;
@@ -110,9 +113,10 @@ $(function () {
 			}
 		});
 	}
-	console.log(full_data);
+	// console.log(full_data);
 	var json_data = JSON.stringify(full_data);
-	console.log(json_data);
+	// console.log(json_data);
+    console.log(games);
 	// $.ajax({
 	// 	type: 'POST',
 	// 	// async: false,
@@ -891,26 +895,6 @@ var data = [
     "winner":"eric",
     "winner_1":"meg",
     "loser":"tim",
-    "loser_1":"christine",
-    "winner_score":22,
-    "loser_score":20,
-    "game_type":21,
-    "series_id":39
-  },
-  {
-    "winner":"eric",
-    "winner_1":"meg",
-    "loser":"tim",
-    "loser_1":"christine",
-    "winner_score":21,
-    "loser_score":15,
-    "game_type":21,
-    "series_id":39
-  },
-  {
-    "winner":"eric",
-    "winner_1":"meg",
-    "loser":"tim",
     "loser_1":"james",
     "winner_score":24,
     "loser_score":22,
@@ -1296,5 +1280,25 @@ var data = [
     "loser_score":6,
     "game_type":21,
     "series_id":38
+  },
+    {
+    "winner":"eric",
+    "winner_1":"meg",
+    "loser":"tim",
+    "loser_1":"christine",
+    "winner_score":22,
+    "loser_score":20,
+    "game_type":21,
+    "series_id":39
+  },
+  {
+    "winner":"eric",
+    "winner_1":"meg",
+    "loser":"tim",
+    "loser_1":"christine",
+    "winner_score":21,
+    "loser_score":15,
+    "game_type":21,
+    "series_id":39
   }
 ]
