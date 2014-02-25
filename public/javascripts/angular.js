@@ -83,8 +83,11 @@ myApp.controller('singlesCtrl', function($scope, $http, $location, chartFactory,
 	      	/**
 	      	* Series & game data
 	      	**/
-	      	var games = data.data.games;			
-	      		$scope.last_played = timestampConverterService.convert(games[games.length-1].timestamp);
+	      	var games = data.data.games;
+	      	
+	      	if (games.length > 0) {
+	      		$scope.last_played = timestampConverterService.convert(games[games.length-1].timestamp);	
+	      	}			
 	      	scoreBuilder.setUserInfo(user_id,games);
 	      	scoreBuilder.build($scope, 'all-time');
 	      	scoreBuilder.buildSidebar($scope, 'all-time');
