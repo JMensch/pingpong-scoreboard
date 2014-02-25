@@ -193,9 +193,6 @@ html, body {
 /*======================================
 =            ADD GAME MODAL            =
 ======================================*/
-@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (orientation: landscape) {
-  .series-switch-container {
-    display: none; } }
 .add-game-modal {
   padding: 1.5em;
   overflow: auto;
@@ -339,3 +336,10 @@ html, body {
       opacity: 0.9; }
   .login p {
     color: #fff; }
+
+/*=====================================
+=            TABLET STYLES            =
+=====================================*/
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (orientation: landscape) {
+  .series-switch-container {
+    display: none !important; } }
