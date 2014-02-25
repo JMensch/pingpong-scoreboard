@@ -274,7 +274,7 @@ myApp.controller('modalCtrl', function($scope, $http, $location) {
     * Configures data for DB insertion, $http post
     **/
     $scope.submitGame = function() {
-    	if ($scope.scores.length == 0 || !($scope.scores.length & 1) || $scope.selected_left.length == 0 || $scope.selected_right.length == 0) {
+    	if ($scope.scores.length == 0 || $scope.selected_left.length == 0 || $scope.selected_right.length == 0) {
     		return false;
     	}
     	var series = {},
@@ -290,6 +290,7 @@ myApp.controller('modalCtrl', function($scope, $http, $location) {
     	_.each($scope.scores, function (game) {
     		(game.t1_score > game.t2_score) ? t1_count = t1_count+1 : t2_count = t2_count+1;
     	});
+    	console.log(series);
     	/**
     	* if t1 won
     	**/
@@ -327,7 +328,6 @@ myApp.controller('modalCtrl', function($scope, $http, $location) {
     	_.each(series.loser, function (player) {
     		delete player.$$hashKey;
     	});
-		
 		$http({
 			method: 'POST',
 			data: JSON.stringify(series),
