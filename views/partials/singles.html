@@ -25,7 +25,7 @@
 						<th>played</th>
 						<th>win rate</th>
 						<th>streak</th>
-						<th>+/-</th>
+						<th>ecord</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -34,21 +34,21 @@
 						<td>{{stats.series.singles.games_played || 0}}</td>
 						<td>{{stats.series.singles.win_rate || 0}}%</td>
 						<td>{{stats.series.singles.streak || 0}}</td>
-						<td>{{stats.series.singles.plus_minus || 0}}</td>
+						<td>{{stats.series.singles.wins || 0}} - {{stats.series.singles.losses || 0}}</td>
 					</tr>
 					<tr>
 						<td>Doubles</td>
 						<td>{{stats.series.doubles.games_played || 0}}</td>
 						<td>{{stats.series.doubles.win_rate || 0}}%</td>
 						<td>{{stats.series.doubles.streak || 0}}</td>
-						<td>{{stats.series.doubles.plus_minus || 0}}</td>
+						<td>{{stats.series.doubles.wins || 0}} - {{stats.series.doubles.losses || 0}}</td>
 					</tr>
 					<tr>
 						<td>Overall</td>
 						<td>{{stats.series.overall.games_played || 0}}</td>
 						<td>{{stats.series.overall.win_rate || 0}}%</td>
 						<td>{{stats.series.overall.streak || 0}}</td>
-						<td>{{stats.series.overall.plus_minus || 0}}</td>					
+						<td>{{stats.series.overall.wins || 0}} - {{stats.series.overall.losses || 0}}</td>					
 					</tr>
 				</tbody>
 			</table>
@@ -62,7 +62,7 @@
 						<th>played</th>
 						<th>win rate</th>
 						<th>streak</th>
-						<th>+/-</th>
+						<th>record</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -71,21 +71,21 @@
 						<td>{{stats.games.singles.games_played || 0}}</td>
 						<td>{{stats.games.singles.win_rate || 0}}%</td>
 						<td>{{stats.games.singles.streak || 0}}</td>
-						<td>{{stats.games.singles.plus_minus || 0}}</td>
+						<td>{{stats.games.singles.wins || 0}} - {{stats.games.singles.losses || 0}}</td>
 					</tr>
 					<tr>
 						<td>Doubles</td>
 						<td>{{stats.games.doubles.games_played || 0}}</td>
 						<td>{{stats.games.doubles.win_rate || 0}}%</td>
 						<td>{{stats.games.doubles.streak || 0}}</td>
-						<td>{{stats.games.doubles.plus_minus || 0}}</td>
+						<td>{{stats.games.doubles.wins || 0}} - {{stats.games.doubles.losses || 0}}</td>
 					</tr>
 					<tr>
 						<td>Overall</td>
 						<td>{{stats.games.overall.games_played || 0}}</td>
 						<td>{{stats.games.overall.win_rate || 0}}%</td>
 						<td>{{stats.games.overall.streak || 0}}</td>
-						<td>{{stats.games.overall.plus_minus || 0}}</td>					
+						<td>{{stats.games.overall.wins || 0}} - {{stats.games.overall.losses || 0}}</td>					
 					</tr>
 				</tbody>
 			</table>
@@ -106,7 +106,7 @@
 						<th>series</th>
 						<th>games</th>
 						<th>total<br>days played</th>
-						<th>avg games<br>per opponent</th>
+						<th>+/-</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -115,21 +115,21 @@
 						<td>{{stats.records.singles.longest_streak_series || 0}}</td>
 						<td>{{stats.records.singles.longest_streak_games || 0}}</td>
 						<td>{{stats.records.singles.total_days_played || 0}}</td>
-						<td>{{stats.records.singles.games_per_opponent || 0}}</td>
+						<td>{{stats.records.singles.plus_minus || 0}}</td>
 					</tr>
 					<tr>
 						<td>Doubles</td>
 						<td>{{stats.records.doubles.longest_streak_series || 0}}</td>
 						<td>{{stats.records.doubles.longest_streak_games || 0}}</td>
 						<td>{{stats.records.doubles.total_days_played || 0}}</td>
-						<td>{{stats.records.doubles.games_per_opponent || 0}}</td>
+						<td>{{stats.records.doubles.plus_minus || 0}}</td>
 					</tr>
 					<tr>
 						<td>Overall</td>
 						<td>{{stats.records.overall.longest_streak_series || 0}}</td>
 						<td>{{stats.records.overall.longest_streak_games || 0}}</td>
 						<td>{{stats.records.overall.total_days_played || 0}}</td>
-						<td>{{stats.records.overall.games_per_opponent || 0}}</td>
+						<td>{{stats.records.overall.plus_minus || 0}}</td>
 					</tr>
 				</tbody>
 			</table>
@@ -137,7 +137,7 @@
 	</div>
 	<div class="sidebar-container small-4 columns">
 		<table class="most-competitive">
-			<caption>Most Competitive</caption>
+			<caption>Most Competitive (series)</caption>
 			<thead>
 				<tr>
 					<th></th>

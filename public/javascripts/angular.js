@@ -274,7 +274,6 @@ myApp.controller('modalCtrl', function($scope, $http, $location) {
     * Configures data for DB insertion, $http post
     **/
     $scope.submitGame = function() {
-    	console.log($scope.scores);
     	if ($scope.scores.length == 0 || !($scope.scores.length & 1) || $scope.selected_left.length == 0 || $scope.selected_right.length == 0) {
     		return false;
     	}
@@ -336,8 +335,10 @@ myApp.controller('modalCtrl', function($scope, $http, $location) {
 		}).
 		success(function (data, status) {
 			$('#add-game-modal').foundation('reveal', 'close');
+			$scope.resetModal();
 		}).
 		error(function (data, status) {
+			alert("There was an error! Please try again.");
 		});
     };
     /**
@@ -414,10 +415,12 @@ myApp.service('timestampConverterService', function() {
 	    	if (Math.round(elapsed/msPerDay) === 0) {
 	    		return 'today';
 	    	} else {
-	        	return Math.round(elapsed/msPerDay) + ' days ago';   
+	    		var time = Math.round(elaped/msPerDay);
+	        	return (time == 1) ? time + ' day ago' : time + ' days ago'; 
 	    	}
 	    } else if (elapsed < msPerYear) {
-	        return Math.round(elapsed/msPerMonth)*30 + ' days ago';   
+	    	var time = Math.round(elapsed/msPerMonth)*30;
+	        return (time == 1) ? time + ' day ago' : time + ' days ago'; 
 	    }
 	}
 });
@@ -1131,11 +1134,12 @@ myApp.factory('scoreBuilder', function () {
 			$scope.stats.series.overall.win_rate = Math.round((singles_wins+doubles_wins) / $scope.stats.series.overall.games_played * 100);
 			
 			/**
-			* individual game +/- is the same as series
+			* all plus_minuses are equivalent
 			**/
-			$scope.stats.games.singles.plus_minus = $scope.stats.series.singles.plus_minus;
-			$scope.stats.games.doubles.plus_minus = $scope.stats.series.doubles.plus_minus;
-			$scope.stats.games.overall.plus_minus = $scope.stats.series.overall.plus_minus;
+			$scope.stats.records.singles.plus_minus = $scope.stats.series.singles.plus_minus;
+			$scope.stats.records.doubles.plus_minus = $scope.stats.series.doubles.plus_minus;
+			$scope.stats.records.overall.plus_minus = $scope.stats.series.overall.plus_minus;
+			
 			$scope.stats.games.overall.games_played = $scope.stats.games.singles.games_played + $scope.stats.games.doubles.games_played;
 
 			$scope.stats.games.singles.win_rate = Math.round(game_singles_wins / ($scope.stats.games.singles.games_played) * 100);
@@ -1151,6 +1155,23 @@ myApp.factory('scoreBuilder', function () {
 			if (temp_doubles.length > 0) {
 				$scope.stats.records.doubles.total_days_played = _.uniq(temp_doubles, function() { return this.timestamp }).length;
 			}
+
+			/**
+			* Series/Games records
+			**/
+			$scope.stats.series.singles.wins = singles_wins;
+			$scope.stats.series.singles.losses = $scope.stats.series.singles.games_played - singles_wins;
+			$scope.stats.series.doubles.wins = doubles_wins;
+			$scope.stats.series.doubles.losses = $scope.stats.series.doubles.games_played - doubles_wins; 
+			$scope.stats.series.overall.wins = singles_wins + doubles_wins;
+			$scope.stats.series.overall.losses = $scope.stats.series.overall.games_played - $scope.stats.series.overall.wins; 
+
+			$scope.stats.games.singles.wins = game_singles_wins;
+			$scope.stats.games.singles.losses = $scope.stats.games.singles.games_played - game_singles_wins;
+			$scope.stats.games.doubles.wins = game_doubles_wins;
+			$scope.stats.games.doubles.losses = $scope.stats.games.doubles.games_played - game_doubles_wins; 
+			$scope.stats.games.overall.wins = game_singles_wins + game_doubles_wins;
+			$scope.stats.games.overall.losses = $scope.stats.games.overall.games_played - $scope.stats.games.overall.wins; 
 		}
 	}
 });
