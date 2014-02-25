@@ -212,7 +212,10 @@ html, body {
 /*======================================
 =            ADD GAME MODAL            =
 ======================================*/
-@media only screen and (width : 966px) and (orientation: landscape) {
+@media only screen and 
+(min-device-width : 768px) and 
+(max-device-width : 1024px) and 
+(orientation: landscape) {
 	.series-switch-container { display: none; }		    
 }
 .add-game-modal {
