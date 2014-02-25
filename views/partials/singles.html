@@ -23,32 +23,32 @@
 					<tr>
 						<th></th>
 						<th>played</th>
+						<th>record</th>
 						<th>win rate</th>
 						<th>streak</th>
-						<th>ecord</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
 						<td>Singles</td>
 						<td>{{stats.series.singles.games_played || 0}}</td>
+						<td>{{stats.series.singles.wins || 0}} - {{stats.series.singles.losses || 0}}</td>
 						<td>{{stats.series.singles.win_rate || 0}}%</td>
 						<td>{{stats.series.singles.streak || 0}}</td>
-						<td>{{stats.series.singles.wins || 0}} - {{stats.series.singles.losses || 0}}</td>
 					</tr>
 					<tr>
 						<td>Doubles</td>
 						<td>{{stats.series.doubles.games_played || 0}}</td>
+						<td>{{stats.series.doubles.wins || 0}} - {{stats.series.doubles.losses || 0}}</td>
 						<td>{{stats.series.doubles.win_rate || 0}}%</td>
 						<td>{{stats.series.doubles.streak || 0}}</td>
-						<td>{{stats.series.doubles.wins || 0}} - {{stats.series.doubles.losses || 0}}</td>
 					</tr>
 					<tr>
 						<td>Overall</td>
 						<td>{{stats.series.overall.games_played || 0}}</td>
+						<td>{{stats.series.overall.wins || 0}} - {{stats.series.overall.losses || 0}}</td>					
 						<td>{{stats.series.overall.win_rate || 0}}%</td>
 						<td>{{stats.series.overall.streak || 0}}</td>
-						<td>{{stats.series.overall.wins || 0}} - {{stats.series.overall.losses || 0}}</td>					
 					</tr>
 				</tbody>
 			</table>
@@ -60,32 +60,32 @@
 					<tr>
 						<th></th>
 						<th>played</th>
+						<th>record</th>
 						<th>win rate</th>
 						<th>streak</th>
-						<th>record</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
 						<td>Singles</td>
 						<td>{{stats.games.singles.games_played || 0}}</td>
+						<td>{{stats.games.singles.wins || 0}} - {{stats.games.singles.losses || 0}}</td>
 						<td>{{stats.games.singles.win_rate || 0}}%</td>
 						<td>{{stats.games.singles.streak || 0}}</td>
-						<td>{{stats.games.singles.wins || 0}} - {{stats.games.singles.losses || 0}}</td>
 					</tr>
 					<tr>
 						<td>Doubles</td>
 						<td>{{stats.games.doubles.games_played || 0}}</td>
+						<td>{{stats.games.doubles.wins || 0}} - {{stats.games.doubles.losses || 0}}</td>
 						<td>{{stats.games.doubles.win_rate || 0}}%</td>
 						<td>{{stats.games.doubles.streak || 0}}</td>
-						<td>{{stats.games.doubles.wins || 0}} - {{stats.games.doubles.losses || 0}}</td>
 					</tr>
 					<tr>
 						<td>Overall</td>
 						<td>{{stats.games.overall.games_played || 0}}</td>
+						<td>{{stats.games.overall.wins || 0}} - {{stats.games.overall.losses || 0}}</td>					
 						<td>{{stats.games.overall.win_rate || 0}}%</td>
 						<td>{{stats.games.overall.streak || 0}}</td>
-						<td>{{stats.games.overall.wins || 0}} - {{stats.games.overall.losses || 0}}</td>					
 					</tr>
 				</tbody>
 			</table>

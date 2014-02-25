@@ -415,7 +415,7 @@ myApp.service('timestampConverterService', function() {
 	    	if (Math.round(elapsed/msPerDay) === 0) {
 	    		return 'today';
 	    	} else {
-	    		var time = Math.round(elaped/msPerDay);
+	    		var time = Math.round(elapsed/msPerDay);
 	        	return (time == 1) ? time + ' day ago' : time + ' days ago'; 
 	    	}
 	    } else if (elapsed < msPerYear) {
