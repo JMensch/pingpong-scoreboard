@@ -84,7 +84,7 @@ myApp.controller('singlesCtrl', function($scope, $http, $location, chartFactory,
 	      	* Series & game data
 	      	**/
 	      	var games = data.data.games;
-	      	
+
 	      	if (games.length > 0) {
 	      		$scope.last_played = timestampConverterService.convert(games[games.length-1].timestamp);	
 	      	}			
@@ -1091,6 +1091,7 @@ myApp.factory('scoreBuilder', function () {
 					* If doubles game
 					**/
 					if (curr_series.winner.length > 1) {
+						temp_doubles.push(curr_series);
 						($scope.stats.series.doubles.streak > 0) ? $scope.stats.series.doubles.streak = -1 : $scope.stats.series.doubles.streak--;
 						$scope.stats.series.doubles.games_played = $scope.stats.series.doubles.games_played+1;
 
@@ -1107,6 +1108,7 @@ myApp.factory('scoreBuilder', function () {
 							}
 						});	
 					} else {
+						temp_singles.push(curr_series);
 						($scope.stats.series.singles.streak > 0) ? $scope.stats.series.singles.streak = -1 : $scope.stats.series.singles.streak--;
 						$scope.stats.series.singles.games_played = $scope.stats.series.singles.games_played+1;
 
