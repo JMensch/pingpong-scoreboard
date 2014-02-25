@@ -212,6 +212,9 @@ html, body {
 /*======================================
 =            ADD GAME MODAL            =
 ======================================*/
+@media only screen and (width : 966px) and (orientation: landscape) {
+	.series-switch-container { display: none; }		    
+}
 .add-game-modal {
 	padding:1.5em;
 	overflow: auto;
