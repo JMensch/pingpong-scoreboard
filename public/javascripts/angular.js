@@ -284,7 +284,7 @@ myApp.controller('modalCtrl', function($scope, $http, $location) {
 			winner = [],
 			loser = [],
 			games = $scope.scores.slice();
-    	
+    	console.log(games);
     	/**
     	* Build object for DB insertion
     	**/
@@ -331,7 +331,6 @@ myApp.controller('modalCtrl', function($scope, $http, $location) {
     	_.each(series.loser, function (player) {
     		delete player.$$hashKey;
     	});
-    	console.log
 		$http({
 			method: 'POST',
 			data: JSON.stringify(series),
@@ -361,8 +360,7 @@ myApp.controller('modalCtrl', function($scope, $http, $location) {
     $scope.resetModal = function() {
     	$scope.slider_right = 0;
     	$scope.slider_left = 0;
-    	$scope.scores[0] = [];
-    	$scope.scores[1] = [];
+    	$scope.scores = []
     	$scope.selected_left = [];
     	$scope.selected_right = [];
     	$scope.team_header_right = '';
