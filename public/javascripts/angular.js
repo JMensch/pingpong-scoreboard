@@ -77,7 +77,7 @@ myApp.controller('singlesCtrl', function($scope, $http, $location, chartFactory,
 	      		$scope.elo = user.elo;
 	      		$scope.total_wins = user.total_wins;
 	      		$scope.total_losses = user.total_losses;
-	      		$scope.win_rate = ($scope.total_wins / ($scope.total_wins + $scope.total_losses) * 100) || 0;
+	      		$scope.win_rate = Math.round($scope.total_wins / ($scope.total_wins + $scope.total_losses) * 100) || 0;
 	      		$scope.last_played;
 	      	}	
 	      	/**
@@ -331,14 +331,25 @@ myApp.controller('modalCtrl', function($scope, $http, $location) {
     	_.each(series.loser, function (player) {
     		delete player.$$hashKey;
     	});
+    	console.log
 		$http({
 			method: 'POST',
 			data: JSON.stringify(series),
 			url: '/api/submitGame'
 		}).
 		success(function (data, status) {
-			$('#add-game-modal').foundation('reveal', 'close');
-			$scope.resetModal();
+			$http({
+				method: 'POST',
+				data: JSON.stringify(series),
+				url: '/api/updateOverallStats'
+			}).
+			success(function (data, status) {
+				$('#add-game-modal').foundation('reveal', 'close');
+				$scope.resetModal();
+			}).
+			error(function (data, status) {
+				alert("There was an error! Please try again.");
+			});
 		}).
 		error(function (data, status) {
 			alert("There was an error! Please try again.");

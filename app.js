@@ -34,8 +34,7 @@ app.get('/partials/:type', routes.partials);
 app.post('/api/login', api.login);
 app.post('/api/user_info', api.user_info);
 app.post('/api/submitGame', api.submitGame);
-app.post('/api/insertCSV', api.insertCSV);
-
+app.post('/api/updateOverallStats', api.updateOverallStats)
 /**
 * Catch-all
 **/

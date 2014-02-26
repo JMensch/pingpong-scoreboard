@@ -126,7 +126,7 @@ exports.submitGame = function(req, res) {
 						res.json({ err: err });
 						db.close();
 					} else {
-						console.log(result);
+						// console.log(result);
 						res.json({ result: result });
 						db.close();
 					}
@@ -135,20 +135,36 @@ exports.submitGame = function(req, res) {
 	});
 };
 
-exports.insertCSV = function(req, res) {
-	var data = req.body;
-	console.log(data);
-  	mongo.connect("mongodb://james:temboparty@localhost:27017/pingpong", function (err, db) {
-		db.collection('games', function (err, collection) {
-			for (var i=0; data.length > 0; i++) {
-				var curr_data = data[i];
-				collection.insert({'test':'test'}, {safe : true}, function (err, result) {
-					if (err) {
-						console.log(err);
-					}
-				});
-			}
+exports.updateOverallStats = function(req, res) {
+	var winner = req.body.winner;  
+	var loser = req.body.loser;
+	var winners = [],
+		losers = [];
+	for(var i=0; winner.length > i; i++) {
+		winners.push(ObjectId(winner[i].id));	
+	}
+	for(var i=0; loser.length > i; i++) {
+		losers.push(ObjectId(loser[i].id));
+	}
+	// console.log(winners);
+	mongo.connect("mongodb://james:temboparty@localhost:27017/pingpong", function (err, db) {
+		db.collection('data', function (err, collection) {
+			collection.update( { _id: { $in: winners }}, { $inc: { total_wins: 1}}, {multi: true},function (err, result) {
+				if (!err) {
+					collection.update( { _id: { $in: losers }}, { $inc: { total_losses: 1}}, {multi:true},function (err, result) {
+						if (err) {
+							db.close();
+						} else {
+							console.log(result);
+							res.json({ result: result });
+							db.close();
+						}
+					});
+				} else {
+					console.log(err);
+					db.close();
+				}
+			});
 		});
-		// db.close();
 	});
-}
+};
