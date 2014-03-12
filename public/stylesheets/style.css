@@ -350,4 +350,9 @@ html, body {
 
   .reveal-modal {
     width: 100% !important;
-    margin-left: -50% !important; } }
+    margin-left: -50% !important; }
+
+  .ui-slider-handle {
+    height: 2em;
+    width: 2em;
+    top: -0.6em; } }
