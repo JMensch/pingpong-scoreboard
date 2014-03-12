@@ -1,6 +1,9 @@
 /*==============================
 =            CONFIG            =
 ==============================*/ 
+/**
+* The angular instance
+**/
 var myApp = angular.module('myApp', ['ngRoute', 'ngResource']).
 	config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
 		$routeProvider.
@@ -32,6 +35,9 @@ var myApp = angular.module('myApp', ['ngRoute', 'ngResource']).
 /*===================================
 =            CONTROLLERS            =
 ===================================*/
+/**
+* Fallback controller
+**/
 myApp.controller('mainCtrl', function($scope, $location, $rootScope) {
     $scope.isActive = function(route) {
         return route === $location.path();
@@ -45,7 +51,9 @@ myApp.controller('mainCtrl', function($scope, $location, $rootScope) {
 		$location.path("/login");
     }
 });
-
+/**
+* Main page controller
+**/
 myApp.controller('singlesCtrl', function($scope, $http, $location, chartFactory, $rootScope, timestampConverterService, scoreBuilder) {
 	$scope.timeChange = function(timeframe, $event) {
 		scoreBuilder.build($scope, timeframe);
@@ -110,7 +118,9 @@ myApp.controller('singlesCtrl', function($scope, $http, $location, chartFactory,
       	$scope.total_wins = 'Error!'
     });
 });
-
+/**
+* Controller for add games modal
+**/
 myApp.controller('modalCtrl', function($scope, $http, $location) {
 	/**
 	* current slider values
@@ -277,7 +287,7 @@ myApp.controller('modalCtrl', function($scope, $http, $location) {
     * Configures data for DB insertion, $http post
     **/
     $scope.submitGame = function() {
-    	if ($scope.scores.length == 0 || $scope.selected_left.length == 0 || $scope.selected_right.length == 0) {
+    	if ($scope.scores.length == 0 || $scope.selected_left.length == 0 || $scope.selected_right.length == 0 || !$scope.scores[0].t1_score || !$scope.scores[0].t2_score) {
     		return false;
     	}
     	var series = {},
@@ -375,7 +385,9 @@ myApp.controller('modalCtrl', function($scope, $http, $location) {
     	$('.ui-slider-handle').css('left', 0);
     };
 });
-
+/**
+* Controller for login page
+**/
 myApp.controller('loginCtrl', function($scope, $http, $location) {
 	$scope.login = function(user) {
 		var json_data = JSON.stringify(user);
@@ -401,7 +413,9 @@ myApp.controller('loginCtrl', function($scope, $http, $location) {
 		});
 	};
 });
-
+/**
+* Authorizes the current user
+**/
 myApp.service('authService', function() {
 	this.auth = function() {
 		if (Modernizr.localstorage && localStorage.user_id) {
@@ -411,7 +425,9 @@ myApp.service('authService', function() {
 		}
 	};
 });
-
+/**
+* Converts timestamp to "X days ago"
+**/
 myApp.service('timestampConverterService', function() {
 	this.convert = function(previous) {
 		var current = Date.now();
@@ -436,7 +452,9 @@ myApp.service('timestampConverterService', function() {
 	    }
 	}
 });
-
+/**
+* Creates the charts
+**/
 myApp.factory('chartFactory', function() {
 	return {
 		makePieData: function(games, $scope) {
@@ -700,15 +718,27 @@ myApp.factory('chartFactory', function() {
 		}
 	};
 });
-
+/**
+* Calculates scores
+**/
 myApp.factory('scoreBuilder', function () {
 	var all_games;
 	var user_id;
 	return {
+		/**
+		* sets user_id and current games
+		* @param string _id
+		* @param array game_data
+		**/
 		setUserInfo: function(_id, game_data) {
 			user_id = _id;
 			all_games = game_data;
 		},
+		/**
+		* Calculates sidebar information
+		* @param object $scope
+		* @param string timeframe
+		**/
 		buildSidebar: function($scope, timeframe) {
 			var games;
 			if (timeframe == "all-time") {
@@ -866,6 +896,11 @@ myApp.factory('scoreBuilder', function () {
 			$scope.most_played = _.max(players, function (player) { return (player.wins_against + player.losses_against) });
 			$scope.recommended = _.min(players, function (player) { return (player.wins_against + player.losses_against) });
 		},
+		/**
+		* Calculates chart information
+		* @param object $scope
+		* @param string timeframe
+		**/
 		build: function($scope, timeframe) {
 			var games;
 			if (timeframe == "all-time") {
@@ -1150,9 +1185,9 @@ myApp.factory('scoreBuilder', function () {
 			/**
 			* all plus_minuses are equivalent
 			**/
-			$scope.stats.records.singles.plus_minus = $scope.stats.series.singles.plus_minus;
-			$scope.stats.records.doubles.plus_minus = $scope.stats.series.doubles.plus_minus;
-			$scope.stats.records.overall.plus_minus = $scope.stats.series.overall.plus_minus;
+			$scope.stats.records.singles.plus_minus = Math.round($scope.stats.series.singles.plus_minus / $scope.stats.series.singles.games_played);
+			$scope.stats.records.doubles.plus_minus = Math.round($scope.stats.series.doubles.plus_minus / $scope.stats.series.doubles.games_played);
+			$scope.stats.records.overall.plus_minus = Math.round($scope.stats.series.overall.plus_minus / $scope.stats.series.overall.games_played);
 			
 			$scope.stats.games.overall.games_played = $scope.stats.games.singles.games_played + $scope.stats.games.doubles.games_played;
 
@@ -1189,7 +1224,9 @@ myApp.factory('scoreBuilder', function () {
 		}
 	}
 });
-
+/**
+* Tells add-games-modal player list where to start
+**/
 myApp.filter('startFrom', function() {
     return function(input, start) {
     	if (input) {
