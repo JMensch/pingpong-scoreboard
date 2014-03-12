@@ -419,6 +419,7 @@ html, body {
 (min-device-width : 768px) and 
 (max-device-width : 1024px) and 
 (orientation: landscape) {
-	.series-switch-container { display: none !important; }		    
+	.series-switch-container { display: none !important; }	
+	.reveal-modal { width: 90% !important; }	    
 }
 
