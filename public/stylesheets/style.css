@@ -303,10 +303,14 @@ html, body {
       .add-game-modal .players-select .score .score-container .ui-slider {
         background: #555;
         margin-top: 1em; }
-      .add-game-modal .players-select .score .score-container .ui-slider-handle {
-        background: #f77f00;
-        border: #f77f00;
-        cursor: move; }
+        .add-game-modal .players-select .score .score-container .ui-slider .ui-slider-handle {
+          background: #f77f00;
+          border: #f77f00;
+          cursor: move;
+          height: 1.5em;
+          width: 1.5em;
+          position: absolute;
+          top: -0.4em; }
   .add-game-modal .players-submit {
     margin: 0.5em auto;
     height: 5em;

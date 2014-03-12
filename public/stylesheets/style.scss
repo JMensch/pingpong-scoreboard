@@ -358,11 +358,15 @@ html, body {
 				.ui-slider {
 					background: #555;
 					margin-top:1em;
-				}
-				.ui-slider-handle {
-					background: $tembo-orange;
-					border: $tembo-orange;
-					cursor: move;
+					.ui-slider-handle {
+						background: $tembo-orange;
+						border: $tembo-orange;
+						cursor: move;
+						height:1.5em;
+						width:1.5em;
+						position:absolute;
+						top:-0.4em;
+					}
 				}
 			}
 		}
