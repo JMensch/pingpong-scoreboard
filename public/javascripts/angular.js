@@ -995,11 +995,18 @@ myApp.factory('scoreBuilder', function () {
 			/**
 			* Calculate total days played
 			**/
-			$scope.stats.records.overall.total_days_played = _.uniq(games, function() { return this.timestamp }).length;
-			
+			$scope.stats.records.overall.total_days_played = _.uniq(games, function (game) {
+				/**
+				* Stripping time from date, leaving year/month/day only
+				**/
+				var temp_date = new Date(game.timestamp); 
+				var date = new Date(temp_date.getFullYear(), temp_date.getMonth(), temp_date.getDate()).valueOf();
+				return date; 
+			}).length;
 			for(var i=0, j=games.length; j > i; i ++) {
 				var curr_series = games[i];
 				var temp_plus_minus = 0;
+
 				/**
 				* If user won
 				**/
@@ -1199,10 +1206,24 @@ myApp.factory('scoreBuilder', function () {
 			* Singles/Doubles total games played
 			**/
 			if (temp_singles.length > 0) {
-				$scope.stats.records.singles.total_days_played = _.uniq(temp_singles, function() { return this.timestamp }).length;
+				$scope.stats.records.singles.total_days_played = _.uniq(temp_singles, function (game) {
+				/**
+				* Stripping time from date, leaving year/month/day only
+				**/
+				var temp_date = new Date(game.timestamp); 
+				var date = new Date(temp_date.getFullYear(), temp_date.getMonth(), temp_date.getDate()).valueOf();
+				return date; 
+			}).length;
 			}
 			if (temp_doubles.length > 0) {
-				$scope.stats.records.doubles.total_days_played = _.uniq(temp_doubles, function() { return this.timestamp }).length;
+				$scope.stats.records.doubles.total_days_played = _.uniq(temp_doubles, function (game) {
+				/**
+				* Stripping time from date, leaving year/month/day only
+				**/
+				var temp_date = new Date(game.timestamp); 
+				var date = new Date(temp_date.getFullYear(), temp_date.getMonth(), temp_date.getDate()).valueOf();
+				return date;
+				}).length;
 			}
 
 			/**
