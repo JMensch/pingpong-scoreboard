@@ -735,6 +735,12 @@ myApp.factory('scoreBuilder', function () {
 			all_games = game_data;
 		},
 		/**
+		* Returns game list
+		**/
+		getGames: function() {
+			return all_games;
+		},
+		/**
 		* Calculates sidebar information
 		* @param object $scope
 		* @param string timeframe
@@ -1011,11 +1017,6 @@ myApp.factory('scoreBuilder', function () {
 				* If user won
 				**/
 				if(_.findWhere(curr_series.winner, { id : user_id })) {
-					_.each(curr_series.series, function (game) {
-						if (game.winner_score > game.loser_score) {
-							count_wins_for_test++;
-						}
-					});
 					/**
 					* If doubles game
 					**/
@@ -1052,7 +1053,7 @@ myApp.factory('scoreBuilder', function () {
 								game_doubles_wins = game_doubles_wins+1;
 								($scope.stats.games.overall.streak < 0) ? $scope.stats.games.overall.streak = 1 : $scope.stats.games.overall.streak++;
 								if ($scope.stats.games.doubles.streak < 0) {
-									$scope.stats.games.doubles.streak = 1
+									$scope.stats.games.doubles.streak = 1;
 									if ($scope.stats.records.doubles.longest_streak_games == 0) {
 										$scope.stats.records.doubles.longest_streak_games = 1;
 									}
@@ -1063,7 +1064,7 @@ myApp.factory('scoreBuilder', function () {
 									}
 								}
 							} else {
-								($scope.stats.games.singles.streak > 0) ? $scope.stats.games.singles.streak = -1 : $scope.stats.games.singles.streak--;
+								($scope.stats.games.doubles.streak > 0) ? $scope.stats.games.doubles.streak = -1 : $scope.stats.games.doubles.streak--;
 								($scope.stats.games.overall.streak > 0) ? $scope.stats.games.overall.streak = -1 : $scope.stats.games.overall.streak--;	
 							}							
 						});	
@@ -1093,7 +1094,7 @@ myApp.factory('scoreBuilder', function () {
 							if (game.winner_score > game.loser_score) {
 								game_singles_wins = game_singles_wins+1;
 								if ($scope.stats.games.singles.streak < 0) {
-									$scope.stats.games.singles.streak = 1
+									$scope.stats.games.singles.streak = 1;
 									if ($scope.stats.records.singles.longest_streak_games == 0) {
 										$scope.stats.records.singles.longest_streak_games = 1;
 									}
@@ -1104,7 +1105,7 @@ myApp.factory('scoreBuilder', function () {
 									}
 								}
 								if ($scope.stats.games.overall.streak < 0) {
-									$scope.stats.games.overall.streak = 1 
+									$scope.stats.games.overall.streak = 1;
 									if ($scope.stats.records.overall.longest_streak_games == 0) {
 										$scope.stats.records.overall.longest_streak_games = 1;
 									}
@@ -1115,7 +1116,7 @@ myApp.factory('scoreBuilder', function () {
 									}
 								}
 							} else {
-								($scope.stats.games.doubles.streak > 0) ? $scope.stats.games.doubles.streak = -1 : $scope.stats.games.doubles.streak--;
+								($scope.stats.games.singles.streak > 0) ? $scope.stats.games.singles.streak = -1 : $scope.stats.games.singles.streak--;
 								($scope.stats.games.overall.streak > 0) ? $scope.stats.games.overall.streak = -1 : $scope.stats.games.overall.streak--;	
 							}								
 						});
