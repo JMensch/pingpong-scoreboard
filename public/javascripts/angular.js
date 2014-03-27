@@ -105,7 +105,7 @@ myApp.controller('singlesCtrl', function($scope, $http, $location, chartFactory,
 	      	var temp = [];
 	      	for(var i=0, j=user_data.length; i < j; i++) {
 	      		if (user_data[i].username && user_data[i].username.length > 1) {
-	      			temp.push({ name: user_data[i].username, id: user_data[i]._id });
+	      			temp.push({ name: user_data[i].username, id: user_data[i]._id, elo: user_data[i].elo });
 	      		}
 	      	}
 	      	$rootScope.players_for_buttons_left = _(temp).sortBy('name');
@@ -121,7 +121,7 @@ myApp.controller('singlesCtrl', function($scope, $http, $location, chartFactory,
 /**
 * Controller for add games modal
 **/
-myApp.controller('modalCtrl', function($scope, $http, $location) {
+myApp.controller('modalCtrl', function($scope, $http, $location, eloService) {
 	/**
 	* current slider values
 	**/
@@ -199,7 +199,6 @@ myApp.controller('modalCtrl', function($scope, $http, $location) {
 		    	$scope.selected_left.push(player); 
 		    	$scope.team_header_left = $scope.selected_left.map(function (player) { return player.name; }).join(" ");
 			}
-			// $scope.$apply();
 		} else {
 			var temp_player = _.find($scope.selected_right, function (item) { return item.id == player.id });
 			if (temp_player) {
@@ -209,7 +208,6 @@ myApp.controller('modalCtrl', function($scope, $http, $location) {
 		    	$scope.selected_right.push(player); 
 		    	$scope.team_header_right = $scope.selected_right.map(function (player) { return player.name; }).join(" ");
 			}
-			// $scope.$apply();
 		}
 	};
 	/**
@@ -272,7 +270,6 @@ myApp.controller('modalCtrl', function($scope, $http, $location) {
 		$('.player-select-button:not(.active)').attr('disabled', 'disabled');
 		// $('.series-switch-container .series:not(.active').attr('disabled', 'disabled');
 		$scope.scores.push( { t1_score: $scope.slider_left, t2_score: $scope.slider_right, game_type: parseInt($scope.curr_game_type) });
-		console.log($scope.scores);
     };
     /**
     * Pops game from scores[]
@@ -284,17 +281,23 @@ myApp.controller('modalCtrl', function($scope, $http, $location) {
     	}
     };
     /**
-    * Configures data for DB insertion, $http post
+    * Submit game button handler
     **/
     $scope.submitGame = function() {
     	if ($scope.scores.length == 0 || $scope.selected_left.length == 0 || $scope.selected_right.length == 0 || !$scope.scores[0].t1_score || !$scope.scores[0].t2_score) {
     		return false;
     	}
-    	var series = {},
+    	$scope.prepareData();
+    };
+    /**
+    * Transforms game data into DB-ready object
+    * @param function $http
+    **/
+    $scope.prepareData = function() {
+		var series = {},
 			winner = [],
 			loser = [],
 			games = $scope.scores.slice();
-    	console.log(games);
     	/**
     	* Build object for DB insertion
     	**/
@@ -303,7 +306,6 @@ myApp.controller('modalCtrl', function($scope, $http, $location) {
     	_.each($scope.scores, function (game) {
     		(game.t1_score > game.t2_score) ? t1_count = t1_count+1 : t2_count = t2_count+1;
     	});
-    	console.log(series);
     	/**
     	* if t1 won
     	**/
@@ -341,24 +343,124 @@ myApp.controller('modalCtrl', function($scope, $http, $location) {
     	_.each(series.loser, function (player) {
     		delete player.$$hashKey;
     	});
-		$http({
+    	$scope.calculateElo(series);
+    };
+    /**
+    * Calculates elo
+    * @param object scores
+    * @param function $http
+    **/
+    $scope.calculateElo = function(series) {
+    	var team1 = series.winner;
+    	var team2 = series.loser;
+    	var expected_scores = eloService.getExpectedElo(team1, team2);
+    	/**
+    	* expected_scores returns false if error or team.length > 2
+    	**/
+    	if (expected_scores) {
+	    	/**
+	    	* Get new ELO ratings
+	    	**/
+	    	var new_rating = eloService.getNewElo(team1, team2, series.games, expected_scores);
+    		$scope.testElo(team1, team2, new_rating);
+	    	/**
+	    	* If doubles game
+	    	**/
+	    	if (new_rating.team1.length > 1) {
+	    		series.winner[0].elo.rating = new_rating.team1[0];
+	    		series.winner[1].elo.rating = new_rating.team1[1];
+	    		series.loser[0].elo.rating = new_rating.team2[0];
+	    		series.loser[1].elo.rating = new_rating.team2[1];		
+	    	} else if (new_rating.team1.length == 1) {
+	    		series.winner[0].elo.rating = new_rating.team1[0];
+	    		series.loser[0].elo.rating = new_rating.team2[0];
+	    	}
+    	}
+    	var series_final = eloService.getNewKFactor(series);
+    	/**
+    	* $http call with series scores
+    	**/
+    	$scope.insertScores(series_final);
+    };
+    /**
+    * Logs ELOs to the console
+    * @param array team1 (winner)
+    * @param array team2 (loser)
+    * @param obj new_rating
+    **/
+    $scope.testElo = function(team1, team2, new_rating) {
+    	if (team1.length > 1) {
+	    	console.group("Current ELOs");
+	    	console.group("Team1");
+	    	console.log(team1[0].name + " : "+ team1[0].elo.rating);
+	    	console.log(team1[1].name + " : "+ team1[1].elo.rating);
+	    	console.groupEnd();
+	    	console.group("Team2");
+	    	console.log(team2[0].name + " : "+ team2[0].elo.rating);
+	    	console.log(team2[1].name + " : "+ team2[1].elo.rating);
+	    	console.groupEnd();
+	    	console.groupEnd();
+
+	    	console.group("New ELOs");
+	    	console.group("Team1");
+	    	console.log(new_rating.team1[0]);
+	    	console.log(new_rating.team1[1]);
+	    	console.groupEnd();
+	    	console.group("Team2");
+	    	console.log(new_rating.team2[0]);
+	    	console.log(new_rating.team2[1]);
+	    	console.groupEnd();
+	    	console.groupEnd();
+	    } else {
+	    	console.group("Current ELOs");
+	    	console.group("Team1");
+	    	console.log(team1[0].name + " : "+ team1[0].elo.rating);
+	    	console.groupEnd();
+	    	console.group("Team2");
+	    	console.log(team2[0].name + " : "+ team2[0].elo.rating);
+	    	console.groupEnd();
+	    	console.groupEnd();
+
+	    	console.group("New ELOs");
+	    	console.group("Team1");
+	    	console.log(new_rating.team1[0]);
+	    	console.groupEnd();
+	    	console.group("Team2");
+	    	console.log(new_rating.team2[0]);
+	    	console.groupEnd();
+	    	console.groupEnd();	    	
+	    }
+    }
+    /**
+    * Inserts new scores into the DB
+    * @param obj series
+    **/
+    $scope.insertScores = function(series) {
+    	$http({
 			method: 'POST',
 			data: JSON.stringify(series),
 			url: '/api/submitGame'
 		}).
 		success(function (data, status) {
-			$http({
-				method: 'POST',
-				data: JSON.stringify(series),
-				url: '/api/updateOverallStats'
-			}).
-			success(function (data, status) {
-				$('#add-game-modal').foundation('reveal', 'close');
-				$scope.resetModal();
-			}).
-			error(function (data, status) {
-				alert("There was an error! Please try again.");
-			});
+			$scope.updateOverallStats(series);
+		}).
+		error(function (data, status) {
+			alert("There was an error! Please try again.");
+		});
+    };
+	/**
+	* Updates DB with new stats
+	* @param obj series
+	**/
+    $scope.updateOverallStats = function(series) {
+    	$http({
+			method: 'POST',
+			data: JSON.stringify(series),
+			url: '/api/updateOverallStats'
+		}).
+		success(function (data, status) {
+			$('#add-game-modal').foundation('reveal', 'close');
+			$scope.resetModal();
 		}).
 		error(function (data, status) {
 			alert("There was an error! Please try again.");
@@ -428,7 +530,7 @@ myApp.service('authService', function() {
 /**
 * Converts timestamp to "X days ago"
 **/
-myApp.service('timestampConverterService', function() {
+myApp.service('timestampConverterService', function() {	
 	this.convert = function(previous) {
 		var current = Date.now();
 		var msPerMinute = 60 * 1000;
@@ -451,6 +553,147 @@ myApp.service('timestampConverterService', function() {
 	        return (time == 1) ? time + ' day ago' : time + ' days ago'; 
 	    }
 	}
+});
+/**
+* Calculates Expected elo and elo
+**/
+myApp.service('eloService', function() {
+	/**
+	* Gets expected elo
+	* @param array team1
+	* @param array team2
+	* @return obj expected_score
+	**/
+	this.getExpectedElo = function(team1, team2) {
+		var expected_score, expected1, expected2;
+		/**
+		* If the game was 1v1
+		**/
+		if (team1.length == 1) {
+			var team1_curr_elo = team1[0].elo.rating;
+			var team2_curr_elo = team2[0].elo.rating;
+			expected1 = 1 / (1 + Math.pow(10, (team2_curr_elo - team1_curr_elo) / 400));
+			expected2 = 1 / (1 + Math.pow(10, (team1_curr_elo - team2_curr_elo) / 400));
+
+			return expected_score = {
+				team1: expected1,
+				team2: expected2
+			};
+		} else if (team1.length == 2) {
+			var team1_avg_curr_elo = Math.round((team1[0].elo.rating + team2[1].elo.rating) / 2);
+			var team2_avg_curr_elo = Math.round((team2[0].elo.rating + team2[1].elo.rating) / 2);
+			expected1 = 1 / (1 + Math.pow(10, (team2_avg_curr_elo - team1_avg_curr_elo) / 400));
+			expected2 = 1 / (1 + Math.pow(10, (team1_avg_curr_elo - team2_avg_curr_elo) / 400));
+
+			return expected_score = {
+				team1: expected1,
+				team2: expected2
+			};
+		} else {
+			return false
+		}
+	};
+	/**
+	* Gets new elo rating
+	* @param array team1 (winner)
+	* @param array team2 (loser)
+	* @param array actual_score
+	* @param obj expected_score
+	* @return obj new_ratings 
+	**/
+	this.getNewElo = function(team1, team2, actual_score, expected_score) {
+		var new_ratings;
+		/**
+		* Foreach game in series
+		**/
+		_.each(actual_score, function (game) {
+			var team1_new_elo, team2_new_elo, team1_curr_elo, team2_curr_elo;
+			/**
+			* If actual_score[i] > 0, use ratings from function scope
+			**/
+			if (new_ratings) {
+				team1_curr_elo = (new_ratings.team1.length > 1) ? Math.round((new_ratings.team1[0] + new_ratings.team1[1]) /2) : new_ratings.team1[0];
+				team2_curr_elo = (new_ratings.team2.length > 1) ? Math.round((new_ratings.team2[0] + new_ratings.team2[1]) /2) : new_ratings.team2[0];
+			} else {
+				team1_curr_elo = (team1.length > 1) ? Math.round((team1[0].elo.rating + team2[1].elo.rating) / 2) : team1[0].elo.rating; 
+				team2_curr_elo = (team2.length > 1) ? Math.round((team2[0].elo.rating + team2[1].elo.rating) / 2) : team2[0].elo.rating; 
+			}
+			/**
+			* Take the minimum KFactor per team
+			**/
+			var team1_KFactor = _.min(team1, function (player) { return parseInt(player.elo.kfactor) }).elo.kfactor;
+			var team2_KFactor = _.min(team2, function (player) { return parseInt(player.elo.kfactor) }).elo.kfactor;
+			/**
+			* Win == 1, loss == 0
+			**/
+			var team1_score = (game.winner_score > game.loser_score) ? 1 : 0;
+			var team2_score = (game.loser_score > game.winner_score) ? 1 : 0;
+			var team1_expected_score = expected_score.team1;
+			var team2_expected_score = expected_score.team2;
+			/**
+			* ELO Algorithm
+			**/
+			team1_new_elo = Math.round(team1_curr_elo + (team1_KFactor * (team1_score - team1_expected_score)));
+			team2_new_elo = Math.round(team2_curr_elo + (team2_KFactor * (team2_score - team2_expected_score)));
+			/**
+			* if 2 players, split the new elo evenly
+			**/
+			if (team1.length > 1) {
+				var team1_player1_new_elo, team1_player2_new_elo, team2_player1_new_elo, team2_player2_new_elo;
+				var team1_avg_change = Math.floor((team1_new_elo - team1_curr_elo)/2);
+				var team2_avg_change = Math.floor((team2_new_elo - team2_curr_elo)/2);
+				if (new_ratings) {
+					team1_player1_new_elo = new_ratings.team1[0] + team1_avg_change;
+					team1_player2_new_elo = new_ratings.team1[1] + team1_avg_change;
+					team2_player1_new_elo = new_ratings.team2[0] + team2_avg_change;
+					team2_player2_new_elo = new_ratings.team2[1] + team2_avg_change;					
+				} else {
+					team1_player1_new_elo = team1[0].elo.rating + team1_avg_change;
+					team1_player2_new_elo = team1[1].elo.rating + team1_avg_change;
+					team2_player1_new_elo = team2[0].elo.rating + team2_avg_change;
+					team2_player2_new_elo = team2[1].elo.rating + team2_avg_change;
+				}	
+				new_ratings = {
+					team1: [team1_player1_new_elo, team1_player2_new_elo],
+					team2: [team2_player1_new_elo, team2_player2_new_elo]
+				} 		
+			} else {
+				new_ratings = {
+					team1: [team1_new_elo],
+					team2: [team2_new_elo]
+				};
+			}
+		});
+		return new_ratings;
+	};
+	/**
+	* Gets new KFactor after ELO is calculated
+	* @param obj series
+	* @return obj series
+	**/
+	this.getNewKFactor = function(series) {
+		var team1 = series.winner;
+		var team2 = series.loser;
+		_.each(team1, function (player) {
+			if (parseInt(player.elo.rating) > 1200) {
+				player.elo.kfactor = 12;
+			} else if (parseInt(player.elo.rating) < 800) {
+				player.elo.kfactor = 20;
+			} else {
+				player.elo.kfactor = 16;
+			}
+		});
+		_.each(team2, function (player) {
+			if (parseInt(player.elo.rating) > 1200) {
+				player.elo.kfactor = 12;
+			} else if (parseInt(player.elo.rating) < 800) {
+				player.elo.kfactor = 20;
+			} else {
+				player.elo.kfactor = 16;
+			}
+		});
+		return series;
+	};
 });
 /**
 * Creates the charts
