@@ -55,6 +55,63 @@ myApp.controller('mainCtrl', function($scope, $location, $rootScope) {
 * Main page controller
 **/
 myApp.controller('singlesCtrl', function($scope, $http, $location, chartFactory, $rootScope, timestampConverterService, scoreBuilder) {
+	(init = function() {
+		var json_data = JSON.stringify({user_id: JSON.parse(localStorage['user_id'])});
+		$http({
+	    	method: 'POST',
+	    	data: json_data,
+	      	url: '/api/user_info'
+	    }).
+	    success(function (data, status, headers, config) {
+	    	if (!$.isEmptyObject(data)) {
+		      	/**
+		      	* General user information
+		      	**/
+		      	var user_data = data.data.user_data;
+		      	var user_id = JSON.parse(localStorage['user_id']);
+		      	var user = _.find(user_data, function (player) { return player._id == user_id });
+		      	
+		      	/**
+		      	* Set top-level user data
+		      	**/
+		      	if (user) {
+		      		$scope.display_name = user.username;
+		      		$scope.elo = user.elo;
+		      		$scope.total_wins = user.total_wins;
+		      		$scope.total_losses = user.total_losses;
+		      		$scope.win_rate = Math.round($scope.total_wins / ($scope.total_wins + $scope.total_losses) * 100) || 0;
+		      		$scope.last_played;
+		      	}	
+		      	/**
+		      	* Series & game data
+		      	**/
+		      	var games = data.data.games;
+
+		      	if (games.length > 0) {
+		      		$scope.last_played = timestampConverterService.convert(games[games.length-1].timestamp);	
+		      	}			
+		      	scoreBuilder.setUserInfo(user_id,games);
+		      	scoreBuilder.build($scope, 'all-time');
+		      	scoreBuilder.buildSidebar($scope, 'all-time');
+		      	/**
+		      	* Build player list for scores entry
+		      	**/
+		      	var temp = [];
+		      	for(var i=0, j=user_data.length; i < j; i++) {
+		      		if (user_data[i].username && user_data[i].username.length > 1) {
+		      			temp.push({ name: user_data[i].username, id: user_data[i]._id, elo: user_data[i].elo });
+		      		}
+		      	}
+		      	$rootScope.players_for_buttons_left = _(temp).sortBy('name');
+		      	$rootScope.players_for_buttons_right = $rootScope.players_for_buttons_left.slice();
+	    	} else {
+	    		$rootScope.error_banner = 'There was a general application error. Please try again later.';
+	    	}
+	    }).
+	    error(function (data, status, headers, config) {
+	      	$scope.total_wins = 'Error!'
+	    });
+	})();
 	$scope.timeChange = function(timeframe, $event) {
 		scoreBuilder.build($scope, timeframe);
 		scoreBuilder.buildSidebar($scope, timeframe);
@@ -65,58 +122,6 @@ myApp.controller('singlesCtrl', function($scope, $http, $location, chartFactory,
 		var el = $event.target;
 		$(el).parent().addClass('active');
 	};
-	var json_data = JSON.stringify({user_id: JSON.parse(localStorage['user_id'])});
-	$http({
-    	method: 'POST',
-    	data: json_data,
-      	url: '/api/user_info'
-    }).
-    success(function (data, status, headers, config) {
-    	console.log(data);
-    	if (!$.isEmptyObject(data)) {
-	      	/**
-	      	* General user information
-	      	**/
-	      	var user_data = data.data.user_data;
-	      	var user_id = JSON.parse(localStorage['user_id']);
-	      	var user = _.find(user_data, function (player) { return player._id == user_id });
-	      	if (user) {
-	      		$scope.display_name = user.username;
-	      		$scope.elo = user.elo;
-	      		$scope.total_wins = user.total_wins;
-	      		$scope.total_losses = user.total_losses;
-	      		$scope.win_rate = Math.round($scope.total_wins / ($scope.total_wins + $scope.total_losses) * 100) || 0;
-	      		$scope.last_played;
-	      	}	
-	      	/**
-	      	* Series & game data
-	      	**/
-	      	var games = data.data.games;
-
-	      	if (games.length > 0) {
-	      		$scope.last_played = timestampConverterService.convert(games[games.length-1].timestamp);	
-	      	}			
-	      	scoreBuilder.setUserInfo(user_id,games);
-	      	scoreBuilder.build($scope, 'all-time');
-	      	scoreBuilder.buildSidebar($scope, 'all-time');
-	      	/**
-	      	* Build player list for scores entry
-	      	**/
-	      	var temp = [];
-	      	for(var i=0, j=user_data.length; i < j; i++) {
-	      		if (user_data[i].username && user_data[i].username.length > 1) {
-	      			temp.push({ name: user_data[i].username, id: user_data[i]._id, elo: user_data[i].elo });
-	      		}
-	      	}
-	      	$rootScope.players_for_buttons_left = _(temp).sortBy('name');
-	      	$rootScope.players_for_buttons_right = $rootScope.players_for_buttons_left.slice();
-    	} else {
-    		$rootScope.error_banner = 'There was a general application error. Please try again later.';
-    	}
-    }).
-    error(function (data, status, headers, config) {
-      	$scope.total_wins = 'Error!'
-    });
 });
 /**
 * Controller for add games modal
