@@ -17,7 +17,7 @@
         <link rel="stylesheet" href="stylesheets/foundation.min.css">
         <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
         <link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
-        <link rel="stylesheet" href="stylesheets/style.css">	  
+        <link rel="stylesheet" href="stylesheets/style.css">
 	</head>
 
 	<body ng-controller="mainCtrl">
@@ -40,14 +40,14 @@
 			<div ng-view class="row"></div>
 		<!-- </div> -->
 		<!-- Add Games Modal -->
-		<div ng-controller="modalCtrl" id="add-game-modal" class="reveal-modal add-game-modal" data-reveal> 
+		<div ng-controller="modalCtrl" id="add-game-modal" class="reveal-modal add-game-modal" data-reveal>
 			<div class="players-select left small-4 columns">
 				<h4>Team one</h4>
 				<div class="button-container">
 					<a ng-click="page('left', 'prev')" href="#" class="prev"><i class="fa fa-angle-left fa-3x"></i></a>
 
 					<a ng-repeat="player in players_for_buttons_left | startFrom: currPage*pageSize | limitTo: pageSize" ng-click="select('left', player)" ng-class="itemClass('left', player)" class="tiny button radius player-select-button" data-id="{{player.id}}">{{player.name}}</a>
-					
+
 					<a ng-click="page('left', 'next')" href="#" class="next"><i class="fa fa-angle-right fa-3x"></i></a>
 				</div>
 				<div class="score">
@@ -86,15 +86,15 @@
 							</tr>
 						</tbody>
 					</table>
-				</div>	
+				</div>
 			</div>
 			<div class="players-select right small-4 columns">
 				<h4>Team two</h4>
 				<div class="button-container">
 					<a ng-click="page('right', 'prev')" href="#" class="prev"><i class="fa fa-angle-left fa-3x"></i></a>
-					
+
 					<a ng-repeat="player in players_for_buttons_right | startFrom: currPage_right*pageSize | limitTo: pageSize" ng-click="select('right', player)" ng-class="itemClass('right', player)" class="tiny button radius player-select-button" data-id="{{player.id}}">{{player.name}}</a>
-					
+
 					<a ng-click="page('right', 'next')" href="#" class="next"><i class="fa fa-angle-right fa-3x"></i></a>
 				</div>
 				<div class="score">
@@ -107,7 +107,7 @@
 				</div>
 			</div>
 			<div class="clearfix"></div>
-			
+
 			<div class="players-submit">
 				<span><a href="#" ng-click="submitGame()" class="button player-submit-button">Submit Series</a> <br/>or <a ng-click="resetModal()" href="#" class="player-cancel-button">reset</a></span>
 			</div>

@@ -27,7 +27,7 @@ exports.user_info = function (req, res) {
 	  	//declare collection
 	  	db.collection('data', function (err, collection) {
 	  		//get user data
-	  		collection.find({},{password : 0}, 
+	  		collection.find({},{ password : 0 }, 
 	  			function (err, cursor) {
   				if (err) {
   					res.json({ user_data: err });
@@ -43,22 +43,21 @@ exports.user_info = function (req, res) {
   							}
   							results.user_data = result;	
 					  	//get games data
-					  	db.collection('games', function (err, collection) {
+					  	db.collection('games', 
+					  		function (err, collection) {
 						  		collection.find({ $or: [{
-						  									winner: { 
-						  										$all: [ 
-						  										{"$elemMatch": { 'id' : user_id } }
-						  									]
-						  								}},
-						  								{
-						  									loser: {
-						  										$all:[
-						  											{"$elemMatch": { 'id': user_id}}
-						  										]
-						  									}
-						  								}
-						  								] 
-						  						}, 
+									winner: { 
+										$all: [ 
+											{"$elemMatch": { 'id' : user_id }}
+										]
+									}},
+									{
+									loser: {
+										$all:[
+											{"$elemMatch": { 'id': user_id }}
+										]
+									}}] 
+						  			}, 
 						  			function (err, cursor) {
 						  				//order by created date
 						  				cursor.sort({ _id: 1 });
@@ -138,25 +137,37 @@ exports.submitGame = function(req, res) {
 exports.updateOverallStats = function(req, res) {
 	var winner = req.body.winner;  
 	var loser = req.body.loser;
-	var winners = [],
-		losers = [];
+	var winners = [], losers = [];
 	for(var i=0; winner.length > i; i++) {
 		winners.push(ObjectId(winner[i].id));	
 	}
 	for(var i=0; loser.length > i; i++) {
 		losers.push(ObjectId(loser[i].id));
 	}
-	// console.log(winners);
 	mongo.connect("mongodb://james:temboparty@localhost:27017/pingpong", function (err, db) {
 		db.collection('data', function (err, collection) {
-			collection.update( { _id: { $in: winners }}, { $inc: { total_wins: 1}}, {multi: true},function (err, result) {
+			/**
+			* Update winners total_wins
+			**/
+			collection.update( { _id: { $in: winners }}, { $inc: { total_wins: 1 }}, { multi: true }, function (err, result) {
 				if (!err) {
-					collection.update( { _id: { $in: losers }}, { $inc: { total_losses: 1}}, {multi:true},function (err, result) {
-						if (err) {
+					/**
+					* Update losers total_losses
+					**/
+					collection.update( { _id: { $in: losers }}, { $inc: { total_losses: 1 }}, { multi:true }, function (err, result) {
+						if (!err) {
+							/**
+							* Update ELO and Kfactor
+							**/
+							for (var i=0; i < winner.length; i++) {
+								collection.update( { _id: ObjectId(winner[i].id) }, { $set: { 'elo.kfactor': winner[i].elo.kfactor, 'elo.rating': winner[i].elo.rating }}, { w:0 });
+							}
+							for (var j=0; j < loser.length; j++) {
+								collection.update( { _id: ObjectId(loser[j].id) }, { $set: { 'elo.kfactor': loser[j].elo.kfactor, 'elo.rating': loser[j].elo.rating }}, { w: 0 });
+							}
 							db.close();
+							res.json({ result : true });
 						} else {
-							console.log(result);
-							res.json({ result: result });
 							db.close();
 						}
 					});
