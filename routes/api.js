@@ -43,7 +43,7 @@ exports.user_info = function (req, res) {
   							}
   							results.user_data = result;	
 					  	//get games data
-					  	db.col lection('games', 
+					  	db.collection('games', 
 					  		function (err, collection) {
 						  		collection.find({ $or: [{
 									winner: { 
