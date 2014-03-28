@@ -14,7 +14,7 @@
 			<li class="active"><a href="#" ng-click="timeChange('all-time', $event)">ALL TIME</a></li>
 			<li><a href="#" ng-click="timeChange('month', $event)">THIS MONTH</a></li>
 			<li><a href="#" ng-click="timeChange('year', $event)">THIS YEAR</a></li>
-			<li><a href="#" ng-click="timeChange('not-mike', $event)">WITHOUT MIKE</a></li>
+			<li ng-hide="display_name == 'Mike'"><a href="#" ng-click="timeChange('not-mike', $event)">WITHOUT MIKE</a></li>
 		</ul>
 	</div>
 	<div class="stats-container small-8 columns">
