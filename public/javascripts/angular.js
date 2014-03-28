@@ -63,6 +63,7 @@ myApp.controller('singlesCtrl', function($scope, $http, $location, chartFactory,
 	      	url: '/api/user_info'
 	    }).
 	    success(function (data, status, headers, config) {
+	    	console.log(data);
 	    	if (!$.isEmptyObject(data)) {
 		      	/**
 		      	* General user information
@@ -520,6 +521,9 @@ myApp.controller('loginCtrl', function($scope, $http, $location) {
 		});
 	};
 });
+/*==========================================
+=            SERVICES/FACTORIES            =
+==========================================*/
 /**
 * Authorizes the current user
 **/
@@ -1005,6 +1009,14 @@ myApp.factory('scoreBuilder', function () {
 						var month = date.getMonth(); 
 						return month == currMonth; 
 					});
+			} else if (timeframe == "not-mike") {
+				games = _.filter(all_games, function (game) {
+					if (!_.find(game.winner, function (player) { return player.id == "52f2866496aea74f5a6ee2c8" }) 
+						&& !_.find(game.loser, function (player) { return player.id == "52f2866496aea74f5a6ee2c8" })) 
+					{
+						return game;
+					}
+				});				
 			} else {
 				var currYear = new Date().getYear();
 				games = _.filter(all_games, function (game) 
@@ -1161,20 +1173,26 @@ myApp.factory('scoreBuilder', function () {
 				games = all_games.slice()
 			} else if (timeframe == "month") {
 				var currMonth = new Date().getMonth();
-				games = _.filter(all_games, function (game) 
-					{ 
-						var date = new Date(game.timestamp);
-						var month = date.getMonth(); 
-						return month == currMonth; 
-					});
+				games = _.filter(all_games, function (game) { 
+					var date = new Date(game.timestamp);
+					var month = date.getMonth(); 
+					return month == currMonth; 
+				});
+			} else if (timeframe == "not-mike") {
+				games = _.filter(all_games, function (game) {
+					if (!_.find(game.winner, function (player) { return player.id == "52f2866496aea74f5a6ee2c8" }) 
+						&& !_.find(game.loser, function (player) { return player.id == "52f2866496aea74f5a6ee2c8" })) 
+					{
+						return game;
+					}
+				});
 			} else {
 				var currYear = new Date().getYear();
-				games = _.filter(all_games, function (game) 
-					{ 
-						var date = new Date(game.timestamp);
-						var year = date.getYear(); 
-						return year == currYear; 
-					});
+				games = _.filter(all_games, function (game) { 
+					var date = new Date(game.timestamp);
+					var year = date.getYear(); 
+					return year == currYear; 
+				});
 			}
 			/**
 			* Series data

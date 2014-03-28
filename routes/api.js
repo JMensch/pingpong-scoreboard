@@ -43,7 +43,7 @@ exports.user_info = function (req, res) {
   							}
   							results.user_data = result;	
 					  	//get games data
-					  	db.collection('games', 
+					  	db.col lection('games', 
 					  		function (err, collection) {
 						  		collection.find({ $or: [{
 									winner: { 
@@ -83,7 +83,6 @@ exports.user_info = function (req, res) {
 	  	});	
 	});
 };
-
 /**
 * Authenticates user
 * @return user_id
@@ -107,7 +106,6 @@ exports.login = function(req, res) {
 	  	});	
 	});
 };
-
 /**
 * Submits game data
 * @return bool
@@ -133,7 +131,9 @@ exports.submitGame = function(req, res) {
 		});
 	});
 };
-
+/**
+* Updates player metadata after game submit
+**/
 exports.updateOverallStats = function(req, res) {
 	var winner = req.body.winner;  
 	var loser = req.body.loser;
