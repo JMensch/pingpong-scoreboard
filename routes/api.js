@@ -165,7 +165,7 @@ exports.updateOverallStats = function(req, res) {
 							for (var j=0; j < loser.length; j++) {
 								collection.update( { _id: ObjectId(loser[j].id) }, { $set: { 'elo.kfactor': loser[j].elo.kfactor, 'elo.rating': loser[j].elo.rating }}, { w: 0 });
 							}
-							db.close();
+							// db.close();
 							res.json({ result : true });
 						} else {
 							db.close();

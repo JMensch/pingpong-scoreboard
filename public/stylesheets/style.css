@@ -326,6 +326,32 @@ html, body {
       color: #555; }
 
 /*==================================
+=            HELP MODAL            =
+==================================*/
+.help-container {
+  height: 500px;
+  border-radius: 10px; }
+  .help-container .help-modal-nav {
+    padding: 0;
+    margin: 0.5em 0 1.5em 0; }
+    .help-container .help-modal-nav ul {
+      list-style: none;
+      text-align: left;
+      margin: 0; }
+    .help-container .help-modal-nav li {
+      margin: 0 1em;
+      padding: 0 0.5em;
+      font-size: 1em;
+      display: inline-block; }
+      .help-container .help-modal-nav li a {
+        width: 100%;
+        color: #333; }
+      .help-container .help-modal-nav li.active {
+        border-bottom: 1px solid #f77f00; }
+        .help-container .help-modal-nav li.active a {
+          color: #f77f00; }
+
+/*==================================
 =            LOGIN PARTIAL         =
 ==================================*/
 .login {

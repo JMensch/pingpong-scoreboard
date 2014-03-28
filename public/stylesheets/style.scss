@@ -394,6 +394,40 @@ html, body {
 }
 
 /*==================================
+=            HELP MODAL            =
+==================================*/
+.help-container { 
+	// background: #ebebeb;
+	height: 500px;
+	border-radius: 10px;
+	.help-modal-nav {
+		padding: 0;
+		margin: 0.5em 0 1.5em 0;
+		ul {
+			list-style: none;
+			text-align:left;
+			margin: 0;
+		}
+		li {
+			margin: 0 1em;
+			padding: 0 0.5em;
+			font-size: 1em;
+			display: inline-block;
+			a {
+				width:100%;
+				color: #333;
+			}
+			&.active {
+				border-bottom: 1px solid $tembo-orange;
+				& a {color: $tembo-orange; }
+			}
+		}
+	}
+}
+
+
+
+/*==================================
 =            LOGIN PARTIAL         =
 ==================================*/
 .login {

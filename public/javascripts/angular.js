@@ -494,6 +494,11 @@ myApp.controller('modalCtrl', function($scope, $http, $location, eloService) {
     };
 });
 /**
+* Controller for help modal
+**/
+myApp.controller('helpModalCtrl', function($scope) {
+});
+/**
 * Controller for login page
 **/
 myApp.controller('loginCtrl', function($scope, $http, $location) {
