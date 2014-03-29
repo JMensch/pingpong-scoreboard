@@ -497,6 +497,49 @@ myApp.controller('modalCtrl', function($scope, $http, $location, eloService) {
 * Controller for help modal
 **/
 myApp.controller('helpModalCtrl', function($scope) {
+	/**
+	* Changes clicked <li> to active and transitions to new text box
+	* @param $event
+	**/
+	$scope.categoryChange = function($event) {
+		$('.help-modal-nav li').removeClass('active');
+		/**
+		* Get the closest li in case they click directly on the <a> or <span>
+		**/
+		var el = $($event.target).closest('li');
+		/**
+		* Get the class of the help-content div to reveal
+		**/
+		var categoryClass = $(el).find('a').attr('class');
+		$(el).addClass('active');
+		$scope.revealDiv(categoryClass);
+		$scope.changeArrow(el);
+	};
+	/**
+	* Reveals related help container
+	* @param string class
+	**/
+	$scope.revealDiv = function(categoryClass) {
+		$('.help-modal-content').css('left', -700);
+		/**
+		* Slides clicked element from left to right
+		**/
+		(slideRight = function() {
+			var el = $('.help-modal-content.'+categoryClass);
+			el.show();
+			el.animate({ 
+				left: (parseInt(el.css('left'), 10)) == 0 ? -el.outerWidth() - 700 : 20
+			});
+		})();
+	}
+	/**
+	* Changes arrow direction
+	* @param HTML li
+	**/
+	$scope.changeArrow = function(li) {
+		$('.help-modal-nav li span').removeClass('fa-chevron-right').addClass('fa-chevron-down');
+		$(li).find('span').removeClass('fa-chevron-down').addClass('fa-chevron-right');
+	}
 });
 /**
 * Controller for login page

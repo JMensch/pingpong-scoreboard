@@ -6,18 +6,11 @@ $tembo-orange: #F77F00;
 =            FONTS            =
 =============================*/
 $fonts: "nexa-light", "nexa-heavy", "nexa-slab-light";
-@each $font-face in $fonts {
-	@font-face {
-		font-family: $font-face; font-style: normal; font-weight: normal;
-          src: url('/path/to/font/#{$font-face}.eot'),
-               url('/path/to/font/#{$font-face}.otf')  format('otf');
-	}
-}
 @mixin font($font, $style: normal, $weight: normal) {
-		font-family: $font, Verdana, sans-serif;
-		font-style: $style;
-		font-weight: $weight;
-	}
+	font-family: $font, Verdana, sans-serif;
+	font-style: $style;
+	font-weight: $weight;
+}
 
 .main-nav a, .singles, .sub-nav ul li:not(.display-name) {
 	@include font("nexa-light");
@@ -31,7 +24,15 @@ $fonts: "nexa-light", "nexa-heavy", "nexa-slab-light";
 .login h4 { 
 	@include font("nexa-light");
 }
-
+.help-modal-nav { 
+	@include font("nexa-slab-light");
+}
+.help-modal-content { 
+	@include font("nexa-light");
+	h4 { 
+		@include font("nexa-heavy");
+	}
+}
 /*============================
 =            NAVIGATION      =
 ============================*/
@@ -396,31 +397,60 @@ html, body {
 /*==================================
 =            HELP MODAL            =
 ==================================*/
+#help-modal { height: 75%; overflow: hidden; }
 .help-container { 
-	// background: #ebebeb;
-	height: 500px;
+	overflow:hidden;
+	background: #ebebeb;
+	min-height: 30em;
 	border-radius: 10px;
+	height: 75%;
+	padding: 0;
 	.help-modal-nav {
+		overflow:hidden;
 		padding: 0;
-		margin: 0.5em 0 1.5em 0;
+		margin: 1.5em 0 0 0;
+		border-right: 1px solid #ababab;
+		height:90%;
 		ul {
 			list-style: none;
 			text-align:left;
 			margin: 0;
 		}
 		li {
-			margin: 0 1em;
-			padding: 0 0.5em;
+			padding: 1em 1em;
+			margin: 0 0.5em;
 			font-size: 1em;
-			display: inline-block;
+			line-height: 1em;
+			cursor: pointer;
+			// &:first-child { padding-top: 0.5em; }
+			&:hover { background: #e3e3e3; }
 			a {
 				width:100%;
-				color: #333;
+				color: #222;
 			}
 			&.active {
-				border-bottom: 1px solid $tembo-orange;
-				& a {color: $tembo-orange; }
+				color: $tembo-orange;
+				a { color: $tembo-orange; }
 			}
+			span.fa { float:right; }
+			span.fa-chevron-right { margin-right: 0.2em; }
+		}
+	}
+	/* Needed for slide in effect */
+	.help-modal-content-container { overflow: hidden; height: 75%; }
+	.help-modal-content {
+		// overflow: auto;
+		background: #ebebeb;
+		margin: 1.5em 0 0 0;
+		position:absolute;
+		left:-700px;
+		&.general { left: 20px; }
+		ul {
+			list-style: none;
+			margin: 0;
+		}
+		p { 
+			margin: 0 0 0 1em;
 		}
 	}
 }

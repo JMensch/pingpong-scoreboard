@@ -117,13 +117,53 @@
 		<!-- Help Modal -->
 		<div id="help-modal" class="reveal-modal help-modal" ng-controller="helpModalCtrl" data-reveal>
 			<div class="small-12 columns help-container">
-				<div class="help-modal-nav">
+				<div class="help-modal-nav small-3 columns">
 					<ul> 
-						<li class="active"><a href="#">General</a></li>
-						<li><a href="#">Adding Games</a></li>
-						<li><a href="#">ELO</a></li>
-						<li><a href="#">Recent Updates</a></li>
+						<li ng-click="categoryChange($event)" class="active">
+							<a class="general" href="#">General</a>
+							<span class="fa fa-chevron-right"></span>
+						<li ng-click="categoryChange($event)">
+							<a class="adding-games" href="#">Adding Games</a>
+							<span class="fa fa-chevron-down"></span>
+						</li>
+						<li ng-click="categoryChange($event)">
+							<a class="elo" href="#">ELO</a>
+							<span class="fa fa-chevron-down"></span>
+						</li>
+						<li ng-click="categoryChange($event)">
+							<a class="recent-updates" href="#">Recent Updates</a>
+							<span class="fa fa-chevron-down"></span>
+						</li>
 					</ul>
+				</div>
+				<div class="help-modal-content-container small-9 columns">
+					<div class="help-modal-content general">
+						<h1>presto testo</h1>
+					</div>
+					<div class="help-modal-content recent-updates">
+						<ul>
+							<li>
+								<h4>Version 1.1.0</h4>
+								<p>Added ELO ratings for everyone but Eric</p>
+								<p>Added "Not Mike" tab</p>
+							</li>
+							<li>
+								<h4>Version 1.0.2</h4>
+								<p>Removed 11/21 switch</p>
+								<p>Optimized slider handles for tablets</p>
+							</li>
+							<li>
+								<h4>Version 1.0.1</h4>
+								<p>Changed all +/- cells from total +/- to average</p>
+								<p>Tablet optimizations for the add score modal</p>
+								<p>Various bug fixes</p>
+							</li>
+							<li>
+								<h4>Version 1.0.0</h4>
+								<p>Initial Release</p>
+							</li>
+						</ul>
+					</div>
 				</div>
 			</div>
 			<a class="close-reveal-modal">&#215;</a>

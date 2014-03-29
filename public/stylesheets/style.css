@@ -10,24 +10,6 @@
 /*=============================
 =            FONTS            =
 =============================*/
-@font-face {
-  font-family: "nexa-light";
-  font-style: normal;
-  font-weight: normal;
-  src: url("/path/to/font/nexa-light.eot"), url("/path/to/font/nexa-light.otf") format("otf"); }
-
-@font-face {
-  font-family: "nexa-heavy";
-  font-style: normal;
-  font-weight: normal;
-  src: url("/path/to/font/nexa-heavy.eot"), url("/path/to/font/nexa-heavy.otf") format("otf"); }
-
-@font-face {
-  font-family: "nexa-slab-light";
-  font-style: normal;
-  font-weight: normal;
-  src: url("/path/to/font/nexa-slab-light.eot"), url("/path/to/font/nexa-slab-light.otf") format("otf"); }
-
 .main-nav a, .singles, .sub-nav ul li:not(.display-name) {
   font-family: "nexa-light", Verdana, sans-serif;
   font-style: normal;
@@ -47,6 +29,20 @@
   font-family: "nexa-light", Verdana, sans-serif;
   font-style: normal;
   font-weight: normal; }
+
+.help-modal-nav {
+  font-family: "nexa-slab-light", Verdana, sans-serif;
+  font-style: normal;
+  font-weight: normal; }
+
+.help-modal-content {
+  font-family: "nexa-light", Verdana, sans-serif;
+  font-style: normal;
+  font-weight: normal; }
+  .help-modal-content h4 {
+    font-family: "nexa-heavy", Verdana, sans-serif;
+    font-style: normal;
+    font-weight: normal; }
 
 /*============================
 =            NAVIGATION      =
@@ -328,28 +324,62 @@ html, body {
 /*==================================
 =            HELP MODAL            =
 ==================================*/
+#help-modal {
+  height: 75%;
+  overflow: hidden; }
+
 .help-container {
-  height: 500px;
-  border-radius: 10px; }
+  overflow: hidden;
+  background: #ebebeb;
+  min-height: 30em;
+  border-radius: 10px;
+  height: 75%;
+  padding: 0;
+  /* Needed for slide in effect */ }
   .help-container .help-modal-nav {
+    overflow: hidden;
     padding: 0;
-    margin: 0.5em 0 1.5em 0; }
+    margin: 1.5em 0 0 0;
+    border-right: 1px solid #ababab;
+    height: 90%; }
     .help-container .help-modal-nav ul {
       list-style: none;
       text-align: left;
       margin: 0; }
     .help-container .help-modal-nav li {
-      margin: 0 1em;
-      padding: 0 0.5em;
+      padding: 1em 1em;
+      margin: 0 0.5em;
       font-size: 1em;
-      display: inline-block; }
+      line-height: 1em;
+      cursor: pointer; }
+      .help-container .help-modal-nav li:hover {
+        background: #e3e3e3; }
       .help-container .help-modal-nav li a {
         width: 100%;
-        color: #333; }
+        color: #222; }
       .help-container .help-modal-nav li.active {
-        border-bottom: 1px solid #f77f00; }
+        color: #f77f00; }
         .help-container .help-modal-nav li.active a {
           color: #f77f00; }
+      .help-container .help-modal-nav li span.fa {
+        float: right; }
+      .help-container .help-modal-nav li span.fa-chevron-right {
+        margin-right: 0.2em; }
+  .help-container .help-modal-content-container {
+    overflow: hidden;
+    height: 75%; }
+  .help-container .help-modal-content {
+    background: #ebebeb;
+    margin: 1.5em 0 0 0;
+    position: absolute;
+    left: -700px; }
+    .help-container .help-modal-content.general {
+      left: 20px; }
+    .help-container .help-modal-content ul {
+      list-style: none;
+      margin: 0; }
+    .help-container .help-modal-content p {
+      margin: 0 0 0 1em; }
 
 /*==================================
 =            LOGIN PARTIAL         =
