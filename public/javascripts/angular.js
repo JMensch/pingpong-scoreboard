@@ -272,6 +272,10 @@ myApp.controller('modalCtrl', function($scope, $http, $location, eloService) {
     		alert("Tie games are not a valid score.");
     		return false;
     	}
+    	if ($scope.scores.length > 9) { 
+    		alert("The maximum number of games per series is 9.");
+    		return false;
+    	}
 		finalized = true;
 		$('.player-select-button:not(.active)').attr('disabled', 'disabled');
 		// $('.series-switch-container .series:not(.active').attr('disabled', 'disabled');
@@ -502,6 +506,11 @@ myApp.controller('helpModalCtrl', function($scope) {
 	* @param $event
 	**/
 	$scope.categoryChange = function($event) {
+		/**
+		* If category is already active, break
+		**/
+		if ($($event.target).closest('li').hasClass('active')) { return; }
+
 		$('.help-modal-nav li').removeClass('active');
 		/**
 		* Get the closest li in case they click directly on the <a> or <span>
@@ -512,6 +521,7 @@ myApp.controller('helpModalCtrl', function($scope) {
 		**/
 		var categoryClass = $(el).find('a').attr('class');
 		$(el).addClass('active');
+		
 		$scope.revealDiv(categoryClass);
 		$scope.changeArrow(el);
 	};
@@ -520,7 +530,7 @@ myApp.controller('helpModalCtrl', function($scope) {
 	* @param string class
 	**/
 	$scope.revealDiv = function(categoryClass) {
-		$('.help-modal-content').css('left', -700);
+		$('.help-modal-content').css('left', -770);
 		/**
 		* Slides clicked element from left to right
 		**/
@@ -528,7 +538,7 @@ myApp.controller('helpModalCtrl', function($scope) {
 			var el = $('.help-modal-content.'+categoryClass);
 			el.show();
 			el.animate({ 
-				left: (parseInt(el.css('left'), 10)) == 0 ? -el.outerWidth() - 700 : 20
+				left: (parseInt(el.css('left'), 10)) == 0 ? -el.outerWidth() - 770 : 20
 			});
 		})();
 	}

@@ -405,6 +405,7 @@ html, body {
 	border-radius: 10px;
 	height: 75%;
 	padding: 0;
+	h4 { margin-bottom: 0; }
 	.help-modal-nav {
 		overflow:hidden;
 		padding: 0;
@@ -437,13 +438,14 @@ html, body {
 		}
 	}
 	/* Needed for slide in effect */
-	.help-modal-content-container { overflow: hidden; height: 75%; }
+	.help-modal-content-container { overflow: hidden; height: 100%; }
 	.help-modal-content {
 		// overflow: auto;
 		background: #ebebeb;
 		margin: 1.5em 0 0 0;
 		position:absolute;
-		left:-700px;
+		left:-770px;
+		width:80%;
 		&.general { left: 20px; }
 		ul {
 			list-style: none;

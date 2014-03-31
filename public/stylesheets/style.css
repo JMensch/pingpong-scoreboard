@@ -336,6 +336,8 @@ html, body {
   height: 75%;
   padding: 0;
   /* Needed for slide in effect */ }
+  .help-container h4 {
+    margin-bottom: 0; }
   .help-container .help-modal-nav {
     overflow: hidden;
     padding: 0;
@@ -367,12 +369,13 @@ html, body {
         margin-right: 0.2em; }
   .help-container .help-modal-content-container {
     overflow: hidden;
-    height: 75%; }
+    height: 100%; }
   .help-container .help-modal-content {
     background: #ebebeb;
     margin: 1.5em 0 0 0;
     position: absolute;
-    left: -700px; }
+    left: -770px;
+    width: 80%; }
     .help-container .help-modal-content.general {
       left: 20px; }
     .help-container .help-modal-content ul {
