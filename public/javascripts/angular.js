@@ -682,7 +682,7 @@ myApp.service('eloService', function() {
 				team1_curr_elo = (new_ratings.team1.length > 1) ? Math.round((new_ratings.team1[0] + new_ratings.team1[1]) /2) : new_ratings.team1[0];
 				team2_curr_elo = (new_ratings.team2.length > 1) ? Math.round((new_ratings.team2[0] + new_ratings.team2[1]) /2) : new_ratings.team2[0];
 			} else {
-				team1_curr_elo = (team1.length > 1) ? Math.round((team1[0].elo.rating + team2[1].elo.rating) / 2) : team1[0].elo.rating; 
+				team1_curr_elo = (team1.length > 1) ? Math.round((team1[0].elo.rating + team1[1].elo.rating) / 2) : team1[0].elo.rating; 
 				team2_curr_elo = (team2.length > 1) ? Math.round((team2[0].elo.rating + team2[1].elo.rating) / 2) : team2[0].elo.rating; 
 			}
 			/**
