@@ -647,7 +647,7 @@ myApp.service('eloService', function() {
 				team2: expected2
 			};
 		} else if (team1.length == 2) {
-			var team1_avg_curr_elo = Math.round((team1[0].elo.rating + team2[1].elo.rating) / 2);
+			var team1_avg_curr_elo = Math.round((team1[0].elo.rating + team1[1].elo.rating) / 2);
 			var team2_avg_curr_elo = Math.round((team2[0].elo.rating + team2[1].elo.rating) / 2);
 			expected1 = 1 / (1 + Math.pow(10, (team2_avg_curr_elo - team1_avg_curr_elo) / 400));
 			expected2 = 1 / (1 + Math.pow(10, (team1_avg_curr_elo - team2_avg_curr_elo) / 400));
