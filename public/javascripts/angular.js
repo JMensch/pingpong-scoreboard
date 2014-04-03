@@ -530,7 +530,7 @@ myApp.controller('helpModalCtrl', function($scope) {
 	* @param string class
 	**/
 	$scope.revealDiv = function(categoryClass) {
-		$('.help-modal-content').css('left', -770);
+		$('.help-modal-content').css('left', -1500);
 		/**
 		* Slides clicked element from left to right
 		**/
@@ -538,7 +538,7 @@ myApp.controller('helpModalCtrl', function($scope) {
 			var el = $('.help-modal-content.'+categoryClass);
 			el.show();
 			el.animate({ 
-				left: (parseInt(el.css('left'), 10)) == 0 ? -el.outerWidth() - 770 : 20
+				left: (parseInt(el.css('left'), 10)) == 0 ? -el.outerWidth() - 1500 : 20
 			});
 		})();
 	}
@@ -707,8 +707,8 @@ myApp.service('eloService', function() {
 			**/
 			if (team1.length > 1) {
 				var team1_player1_new_elo, team1_player2_new_elo, team2_player1_new_elo, team2_player2_new_elo;
-				var team1_avg_change = Math.floor((team1_new_elo - team1_curr_elo)/2);
-				var team2_avg_change = Math.floor((team2_new_elo - team2_curr_elo)/2);
+				var team1_avg_change = Math.round((team1_new_elo - team1_curr_elo)/2);
+				var team2_avg_change = Math.round((team2_new_elo - team2_curr_elo)/2);
 				if (new_ratings) {
 					team1_player1_new_elo = new_ratings.team1[0] + team1_avg_change;
 					team1_player2_new_elo = new_ratings.team1[1] + team1_avg_change;
@@ -723,7 +723,7 @@ myApp.service('eloService', function() {
 				new_ratings = {
 					team1: [team1_player1_new_elo, team1_player2_new_elo],
 					team2: [team2_player1_new_elo, team2_player2_new_elo]
-				} 		
+				}; 		
 			} else {
 				new_ratings = {
 					team1: [team1_new_elo],
